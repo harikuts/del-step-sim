@@ -16,6 +16,10 @@ class Console:
         pass
     def run(self):
         while True:
+            # Process network step
+            for client in self.clients.values():
+                client.net.step()
+            print("Network processes executed.")
             try:
                 cmd = input(">>").strip().split(" ")
                 cmd = [c.strip() for c in cmd]

@@ -26,9 +26,13 @@ class DummyNet:
     def init_network(self, registry):
         # Build neighbors
         self.build_neighbors(registry)
-        # Init sender and receiver processes
-        self.init_sender()
-        self.init_receiver()
+        # Init sender and receiver processes (removed because threading is causing latency issues)
+        # self.init_sender()
+        # self.init_receiver()
+
+    def step(self):
+        self.__send()
+        self.__receive()
         
     # Used to set active flag such that send/receive processes terminate.
     def kill(self):
@@ -63,10 +67,10 @@ class DummyNet:
     
     # Network layer send function.
     def __send(self):
-        while self.active:
+        if self.active:
             # Send packet, if failed, print exception.
             try:
-                if len(self.outbox):
+                while len(self.outbox):
                     packet = self.outbox.pop(0)
                     self.neighbors[packet.dest].receiver.append(packet)
                     self.print_("Sent: " + str(packet))
@@ -76,9 +80,9 @@ class DummyNet:
     
     # Receiving/processing function.
     def __receive(self):
-        while self.active:
+        if self.active:
             try:
-                if len(self.receiver):
+                while len(self.receiver):
                     packet = self.receiver.pop(0)
                     self.inbox.append(packet)
                     self.print_("Received: " + str(packet))
