@@ -21,7 +21,7 @@ class Console:
                 client.net.step()
             print("Network processes executed.")
             try:
-                cmd = input(">>").strip().split(" ")
+                cmd = input("\n>>").strip().split(" ")
                 cmd = [c.strip() for c in cmd]
                 if cmd[0] == "exit":
                     break
@@ -39,6 +39,8 @@ class Console:
                         self.floodall()  
                     else:
                         self.flood(cmd[1])
+                elif cmd[0] == "guestbook":
+                    self.iguest(cmd[1])
                 else:
                     print("Command does not exist.")
             except Exception as e:
@@ -64,6 +66,8 @@ class Console:
     # NODE LEVEL COMMANDS
     def istep(self, ip):
         self.clients[ip].process()
+    def iguest(self, ip):
+        print(self.clients[ip].guest_book)
 
 import time
 from datetime import datetime

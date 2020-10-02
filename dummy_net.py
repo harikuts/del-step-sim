@@ -102,6 +102,9 @@ class DummyNet:
     def receive(self):
         # If buffer is not empty, return packet, else return None.
         try:
-            return self.inbox.pop(0)
+            message = self.inbox.pop(0)
+            self.print_("Found message.")
+            return message
         except:
+            self.print_("No messages.")
             return None

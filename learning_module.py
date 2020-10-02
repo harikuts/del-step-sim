@@ -24,7 +24,7 @@ class Model:
         
     def step(self):
         history = self.model.fit(self.data[X_INDEX], self.data[Y_INDEX], epochs=NUM_EPOCHS)
-        self.sharing_model = (self.data[DATA_INDEX], self.model.get_weights)
+        self.sharing_model = (self.data[DATA_INDEX], self.model.get_weights())
         
     # List of tuples of [data size, weights] from other nodes
     def aggregate(self, recv_list):
@@ -102,6 +102,6 @@ class ModelIncubator:
             dataSplits.append((data_size, x_data, y_data))
         return dataSplits
     
-mi = ModelIncubator([0.5, 0.25, 0.25])
-m = Model(mi.data_shares[0])
-m.step()
+# mi = ModelIncubator([0.5, 0.25, 0.25])
+# m = Model(mi.data_shares[0])
+# m.step()
