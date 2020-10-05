@@ -85,6 +85,13 @@ class Client:
         # Step the guest book
         self.guest_book.step()        
     
+    # Aggregation function redirects to model-level aggregation.
+    def aggregate(self):
+        # Redirect to model-level aggregation
+        weight_list = [(rec.data_size, rec.weights) for rec in self.guest_book.records]
+        self.model.aggregate(weight_list)
+        # Update expiry table
+
     # Lowest level client transmission function.
     def transmit(self, payload, target_addr):
         self.net.send(payload, target_addr)

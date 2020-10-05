@@ -11,7 +11,7 @@ CUR_DIR = os.getcwd()
 
 X_INDEX = 1
 Y_INDEX = 2
-DATA_INDEX = 0
+D_SIZE_INDEX = 0
 
 NUM_EPOCHS = 2
 
@@ -21,14 +21,24 @@ class Model:
         self.data = data
         self.model = self.create_model()
         self.sharing_model = None
+        self.communal_learning_rate = 1.0
         
     def step(self):
         history = self.model.fit(self.data[X_INDEX], self.data[Y_INDEX], epochs=NUM_EPOCHS)
-        self.sharing_model = (self.data[DATA_INDEX], self.model.get_weights())
+        self.sharing_model = (self.data[D_SIZE_INDEX], self.model.get_weights())
         
     # List of tuples of [data size, weights] from other nodes
     def aggregate(self, recv_list):
-        pass
+        # Add self to list
+        recv_list.append(self.sharing_model)
+        # Aggregate all weights in list, based on the ratio of their data
+        sizes = np.array([x[0] for x in recv_list])
+        weights = np.array([x[1] for x in recv_list])
+        weight_ratios = sizes / sum(sizes)
+        new_weights = np.dot(weigh_ratios, weights)
+
+        # Perform aggregation
+        self.model = (1 - self.communal_learning_rate) * self.model + self.communal_learning_rate * new_weights
     
     # Use this function to select one of the model creation functions
     def create_model(self):
