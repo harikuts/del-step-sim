@@ -13,15 +13,24 @@ import threading
 class Console:
     def __init__(self, clientDict):
         self.clients = clientDict
+        self.cmd_queue = []
         pass
     def run(self):
         while True:
             # Process command
             try:
-                cmd = input("\n>>").strip().split(" ")
+                # If cmd_queue is not empty, pop a command
+                if len(self.cmd_queue):
+                    cmd = self.cmd_queue.pop(0)
+                    print("\nQ>" + cmd)
+                else:
+                    cmd = input("\n>>")
+                cmd = cmd.strip().split(" ")
                 cmd = [c.strip() for c in cmd]
                 if cmd[0] == "exit":
                     break
+                elif cmd[0] == "load":
+                    self.load_script(cmd[1])
                 elif cmd[0] == "step":
                     if len(cmd) == 1:
                         self.step()
@@ -58,6 +67,13 @@ class Console:
             except Exception as e:
                 print("Command did not work. Check arguments.")
                 print(e)
+    # SCRIPTING
+    def load_script(self, filename):
+        try:
+            with open(filename, "r") as f:
+                self.cmd_queue = self.cmd_queue + f.readlines()
+        except:
+            print("Failed to load file: " + filename)
     # SYSTEM LEVEL COMMANDS
     def get_all_addrs(self):
         return str(list(self.clients.keys()))
