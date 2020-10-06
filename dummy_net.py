@@ -11,7 +11,7 @@ class Packet:
         self.dest = dest
         self.data = data
     def __str__(self):
-        return "src=" + self.src + ",dest=" + self.dest + ",data=" + str(self.data)
+        return "src=" + self.src + ",dest=" + self.dest + ",data=" + str(type(self.data))
 
 class DummyNet:
     def __init__(self, address, neighbor_addrs = []):

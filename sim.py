@@ -16,10 +16,7 @@ class Console:
         pass
     def run(self):
         while True:
-            # Process network step
-            for client in self.clients.values():
-                client.net.step()
-            print("Network processes executed.")
+            # Process command
             try:
                 cmd = input("\n>>").strip().split(" ")
                 cmd = [c.strip() for c in cmd]
@@ -30,6 +27,16 @@ class Console:
                         self.step()
                     else:
                         self.istep(cmd[1])
+                elif cmd[0] == "nstep":
+                    if len(cmd) == 1:
+                        self.nstep()
+                    else:
+                        self.instep(cmd[1])
+                elif cmd[0] == "tstep":
+                    if len(cmd) == 1:
+                        self.tstep()
+                    else:
+                        self.itstep(cmd[1])
                 elif cmd[0] == "neighborhood":
                     print (self.get_all_addrs())
                 elif cmd[0] == "exchange":
@@ -43,6 +50,9 @@ class Console:
                     self.iguest(cmd[1])
                 else:
                     print("Command does not exist.")
+                # Process network step
+                self.nstep()
+                print("Network processes executed.")
             except Exception as e:
                 print("Command did not work. Check arguments.")
                 print(e)
@@ -52,6 +62,15 @@ class Console:
     def step(self):
         for client in self.clients.values():
             client.process()
+    def nstep(self):
+        # do twice to cover all interactions
+        for client in self.clients.values():
+            client.net.step()
+        for client in self.clients.values():
+            client.net.step()
+    def tstep(self):
+        for client in self.clients.values():
+            client.train_model()
     def floodall(self):
         for client in self.clients.values():
             for neighbor in client.net.neighbors.keys():
@@ -66,6 +85,10 @@ class Console:
     # NODE LEVEL COMMANDS
     def istep(self, ip):
         self.clients[ip].process()
+    def instep(self, ip):
+        self.clients[ip].net.step()
+    def itstep(self, ip):
+        self.clients[ip].train_model()
     def iguest(self, ip):
         print(self.clients[ip].guest_book)
 

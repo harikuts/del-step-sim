@@ -69,7 +69,13 @@ class Client:
         
     # Main run process as a state machine.
     def process(self):
-        # While active, run
+        recvd = self.recv_aggregate_model()
+        if not recvd:
+            self.train_model()  
+        # Step the guest book
+        self.guest_book.step()
+
+    def recv_aggregate_model(self):
         # Check inbox
         packet = self.net.receive()
         if packet is not None:
@@ -77,13 +83,15 @@ class Client:
             self.print_("Processing model from " + str(packet.src))
             self.guest_book.encounter(packet.src, packet.data, EXPIRY)
             self.print_("Aggregating model with new input.")
+            return True
         else:
-            # Train the model on local data
-            self.print_("Training model.")
-            self.model.step()
-            self.model_ready = True    
-        # Step the guest book
-        self.guest_book.step()        
+            return False
+    
+    def train_model(self):
+        # Train the model on local data
+        self.print_("Training model.")
+        self.model.step()
+        self.model_ready = True          
     
     # Aggregation function redirects to model-level aggregation.
     def aggregate(self):
