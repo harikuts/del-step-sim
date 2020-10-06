@@ -41,19 +41,28 @@ class Model:
         # Aggregate all weights in list, based on the ratio of their data
         sizes = [float(x[0]) for x in recv_list]
         sizes = np.array(sizes)
-        weights = [x[1] for x in recv_list]
         size_ratios = sizes / sum(sizes)
+        print("Computed size ratios.")
+        weights = [x[1] for x in recv_list]
         parts = []
         # import pdb
         # pdb.set_trace()
         for i in range(len(size_ratios)):
             products = [size_ratios[i] * w for w in weights[i]]
             parts.append(products)
-        new_weights = sum(parts)
+        print("Got all parts.")
+        new_weights = []
+        for i in range(len(parts[0])):
+            stack = [part[i] for part in parts]
+            new_weights.append(sum(stack))
+        print("Summed all parts. New weights obtained.")
 
         # Perform aggregation
         cur_weights = self.model.get_weights()
-        learned_weights = (1 - self.communal_learning_rate) * cur_weights + self.communal_learning_rate * new_weights
+        learned_weights = []
+        for i in range(len(cur_weights)):
+            stack = (1 - self.communal_learning_rate) * cur_weights[i] + self.communal_learning_rate * new_weights[i]
+            learned_weights.append(stack)
         self.model.set_weights(learned_weights)
     
     # Use this function to select one of the model creation functions
