@@ -83,6 +83,9 @@ class Client:
             self.print_("Processing model from " + str(packet.src))
             self.guest_book.encounter(packet.src, packet.data, EXPIRY)
             self.print_("Aggregating model with new input.")
+            # Get list of (size, model weights)
+            size_weight_list = [(record.data_size, record.weights) for record in self.guest_book.records.values()]
+            self.model.aggregate(size_weight_list)
             return True
         else:
             return False

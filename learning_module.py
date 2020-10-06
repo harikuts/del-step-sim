@@ -17,15 +17,22 @@ NUM_EPOCHS = 2
 
 class Model:
     
-    def __init__(self, data):
+    def __init__(self, data, test_data=None):
         self.data = data
         self.model = self.create_model()
         self.sharing_model = None
         self.communal_learning_rate = 1.0
+
+        self.test_data=test_data
         
     def step(self):
         history = self.model.fit(self.data[X_INDEX], self.data[Y_INDEX], epochs=NUM_EPOCHS)
         self.sharing_model = (self.data[D_SIZE_INDEX], self.model.get_weights())
+
+    def test(self):
+        if self.test_data is not None:
+            loss, acc = self.model.evaluate(self.test_data[X_INDEX], self.test_data[Y_INDEX], verbose=1)
+            return loss, acc
         
     # List of tuples of [data size, weights] from other nodes
     def aggregate(self, recv_list):
@@ -35,10 +42,11 @@ class Model:
         sizes = np.array([x[0] for x in recv_list])
         weights = np.array([x[1] for x in recv_list])
         weight_ratios = sizes / sum(sizes)
-        new_weights = np.dot(weigh_ratios, weights)
+        new_weights = np.dot(weight_ratios, weights)
 
         # Perform aggregation
-        self.model = (1 - self.communal_learning_rate) * self.model + self.communal_learning_rate * new_weights
+        learned_weights = (1 - self.communal_learning_rate) * self.model.get_weights + self.communal_learning_rate * new_weights
+        self.model.set_weights(learned_weights)
     
     # Use this function to select one of the model creation functions
     def create_model(self):
@@ -60,6 +68,7 @@ class ModelIncubator:
     def __init__(self, data_ratios):
         self.x_train, self.x_test, self.y_train, self.y_test = self.get_dataset()
         self.data_shares = self.rsplit(self.x_train, self.y_train, nonIID=True, ratios=data_ratios)
+        self.test_data = (len(self.x_test), self.x_test, self.y_test)
         print("Model incubator has been generated.")
         
     # Use this function to select one of the dataset grab functions

@@ -32,7 +32,7 @@ class Console:
                         self.nstep()
                     else:
                         self.instep(cmd[1])
-                elif cmd[0] == "tstep":
+                elif cmd[0] == "train":
                     if len(cmd) == 1:
                         self.tstep()
                     else:
@@ -48,6 +48,8 @@ class Console:
                         self.flood(cmd[1])
                 elif cmd[0] == "guestbook":
                     self.iguest(cmd[1])
+                elif cmd[0] == "test":
+                    self.test(cmd[1])
                 else:
                     print("Command does not exist.")
                 # Process network step
@@ -91,6 +93,9 @@ class Console:
         self.clients[ip].train_model()
     def iguest(self, ip):
         print(self.clients[ip].guest_book)
+    def test(self, ip):
+        results = self.clients[ip].model.test()
+        print("LOSS:", results[0], "ACCURACY:", results[1])
 
 import time
 from datetime import datetime
@@ -120,7 +125,7 @@ clientDict = {}
 ind = 0
 for ip in ipRegistry.keys():
     print("Creating client ", ind, " with IP ", ip, ".")
-    clientDict[ip] = Client(netNode=ipRegistry[ip], model=Model(data=MI.data_shares[ind]))
+    clientDict[ip] = Client(netNode=ipRegistry[ip], model=Model(data=MI.data_shares[ind], test_data=MI.test_data))
     ind += 1
 print("Clients created and linked to nodes.")
 
