@@ -40,29 +40,37 @@ class Model:
         recv_list.append(self.sharing_model)
         # Aggregate all weights in list, based on the ratio of their data
         sizes = [float(x[0]) for x in recv_list]
-        sizes = np.array(sizes)
+        sizes = np.array(sizes, dtype=object)
         size_ratios = sizes / sum(sizes)
+        print(size_ratios) # DEBUG
         print("Computed size ratios.")
-        weights = [x[1] for x in recv_list]
+        weights = np.array([x[1] for x in recv_list], dtype=object)
         parts = []
-        # import pdb
-        # pdb.set_trace()
+        print("WEIGHTS:", [w[0] for w in weights], weights.shape) # DEBUG
         for i in range(len(size_ratios)):
             products = [size_ratios[i] * w for w in weights[i]]
             parts.append(products)
+        parts = np.array(parts, dtype=object)
         print("Got all parts.")
+        print("ADJUSTED:", [p[0] for p in parts], parts.shape) # DEBUG
         new_weights = []
         for i in range(len(parts[0])):
             stack = [part[i] for part in parts]
             new_weights.append(sum(stack))
+        new_weights = np.array(new_weights, dtype=object)
+        print("NEW WEIGHTS:", new_weights[0], new_weights.shape) # DEBUG
         print("Summed all parts. New weights obtained.")
 
         # Perform aggregation
         cur_weights = self.model.get_weights()
+        cur_weights = np.array(cur_weights, dtype=object)
+        print("CUR WEIGHTS:", cur_weights[0], cur_weights.shape) # DEBUG
         learned_weights = []
         for i in range(len(cur_weights)):
             stack = (1 - self.communal_learning_rate) * cur_weights[i] + self.communal_learning_rate * new_weights[i]
             learned_weights.append(stack)
+        learned_weights = np.array(learned_weights, dtype=object)
+        print("LEARNED WEIGHTS:", learned_weights[0], learned_weights.shape) # DEBUG
         self.model.set_weights(learned_weights)
     
     # Use this function to select one of the model creation functions

@@ -7,11 +7,14 @@ EXPIRY = 10
 
 # A single record.
 class Record:
-    def __init__(self, ip, shared_weights, expiry):
+    def __init__(self, ip, shared_weights, expiry, debug=False):
         self.ip = ip
         self.data_size = shared_weights[0]
         self.weights = shared_weights[1]
         self.expiry = expiry
+        self.debug = debug
+        # import pdb
+        # pdb.set_trace()
     def step(self, s=1):
         self.expiry -= 1
         if self.expiry <= 0:
@@ -19,12 +22,14 @@ class Record:
         else:
             return False
     def __str__(self):
-        return (str(self.ip) + " :: EXP" + str(self.expiry) + " :: DAT" + str(self.data_size) + " :: " + str(self.weights))
+        return (str(self.ip) + " :: EXP" + str(self.expiry) + " :: DAT" + str(self.data_size) + " :: " + \
+            str(self.weights[0][0][0]))
 
 # Holds and manages records and requests.
 class GuestBook:
-    def __init__(self):
+    def __init__(self, debug=True):
         self.records = {}
+        self.debug = debug
     def encounter(self, ip, shared_weights, expiry):
         self.records[ip] = Record(ip, shared_weights, expiry)
     def step(self):
@@ -33,6 +38,9 @@ class GuestBook:
             # If incremental step results in expiration, remove record.
             if self.records[ip].step():
                 expunged = self.records.pop(ip)
+        # If debug, print
+        if self.debug:
+            print(self)
     def __str__(self):
         if len(self.records.values()):
             return "\n".join([str(record) for record in self.records.values()])
