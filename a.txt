@@ -1,0 +1,7 @@
+train 10.0.0.1
+train 10.0.0.3
+test 10.0.0.3
+guestbook 10.0.0.3
+exchange 10.0.0.1 10.0.0.3
+step 10.0.0.3
+test 10.0.0.3
