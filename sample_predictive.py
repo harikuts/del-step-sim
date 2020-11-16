@@ -91,4 +91,4 @@ tensorboard_Visualization = TensorBoard(log_dir=logdir)
 
 model = get_LSTM(vocab_size)
 model.compile(loss="categorical_crossentropy", optimizer=tf.keras.optimizers.Adam(lr=0.001))
-model.fit(X, y, epochs=150, batch_size=64, callbacks=[checkpoint, reduce, tensorboard_Visualization])
+model.fit(X, y, epochs=150, batch_size=4, callbacks=[checkpoint, reduce, tensorboard_Visualization])
