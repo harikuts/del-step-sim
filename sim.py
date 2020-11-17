@@ -14,6 +14,7 @@ class Console:
     def __init__(self, clientDict):
         self.clients = clientDict
         self.cmd_queue = []
+        self.groups = {}
         pass
     def run(self):
         while True:
@@ -59,6 +60,23 @@ class Console:
                     self.iguest(cmd[1])
                 elif cmd[0] == "test":
                     self.test(cmd[1])
+                # Group commands
+                elif cmd[0] == "group":
+                    # List all groups
+                    if cmd[1] == "list":
+                        print("Active groups:", self.groups.keys())
+                    # List members of a group
+                    if cmd[1] == "roster":
+                        print(self.get_group_roster(cmd[1]))
+                    # Create new group
+                    if cmd[1] == "new":
+                        self.groups[cmd[2]] = []
+                    # Add member to a group
+                    if cmd[1] == "add":
+                        self.group_add(cmd[2], cmd[3:])
+                    # Remove member from a group
+                    if cmd[1] == "remove":
+                        self.group_remove(cmd[2], cmd[3:])
                 else:
                     print("Command does not exist.")
                 # Process network step
@@ -112,6 +130,46 @@ class Console:
     def test(self, ip):
         results = self.clients[ip].model.test()
         print("LOSS:", results[0], "ACCURACY:", results[1])
+    # GROUP COMMANDS
+    def get_group_roster(self, groupname):
+        if groupname in self.groups.keys():
+            return self.groups[groupname]
+        else:
+            print("Group name not valid. Current groups:", self.groups.keys())
+    def create_group(self, name):
+        self.groups[name] = []
+        print("Current groups:", self.groups.keys())
+    def group_add(self, groupname, iplist):
+        if groupname in self.groups.keys():
+            for ip in iplist:
+                if ip in self.clients.keys():
+                    self.groups[groupname].append(ip)
+                    print("Added", ip)
+                else:
+                    print("IP address ", ip, "not valid.")
+                print("Updated roster:", self.groups[groupname])
+        else:
+            print("Group name not valid. Current groups:", self.groups.keys())
+    def group_remove(self, groupname, iplist):
+        if groupname in self.groups.keys():
+            for ip in iplist:
+                if ip in self.groups[groupname]:
+                    self.groups[groupname].remove(ip)
+                    print("Removed", ip)
+                else:
+                    print("IP address ", ip, "not found in group.")
+                print("Updated roster:", self.groups[groupname])
+        else:
+            print("Group name not valid. Current groups:", self.groups.keys())
+    def group_membership(self, ip):
+        if ip in self.clients.keys():
+            memberships = []
+            for group in self.groups.keys():
+                if ip in self.groups[group]:
+                    memberships.append(group)
+            print(ip, "is a member of:", memberships)
+        else:
+            print("IP address not valid.")
 
 import time
 from datetime import datetime
