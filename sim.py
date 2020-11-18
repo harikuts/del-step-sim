@@ -87,6 +87,8 @@ class Console:
                     # See IP's membership
                     elif cmd[1] == "membership":
                         self.group_membership(cmd[2])
+                    elif cmd[1] == "share":
+                        self.group_share[cmd[2]]
                     else:
                         print("Group command invalid.")
                 else:
@@ -189,15 +191,28 @@ class Console:
             print(ip, "is a member of:", memberships)
         else:
             print("IP address not valid.")
+    def group_share(self, groupname):
+        if groupname in self.groups.keys():
+            members = self.groups[groupname][:]
+            # Hit every combination of members
+            while len(members) >= 2:
+                node1 = members.pop(0)
+                for node2 in members:
+                    # self.exchange(node1, node2)
+                    print("Exchanging between", node1, "and", node2)
+        else:
+            print("Group name not valid. Current groups:", self.groups.keys())
 
 import time
 from datetime import datetime
 
 # Create a graph
 graph = {}
-graph["10.0.0.1"] = ["10.0.0.2", "10.0.0.3"]
-graph["10.0.0.2"] = ["10.0.0.1", "10.0.0.3"]
-graph["10.0.0.3"] = ["10.0.0.1", "10.0.0.2"]
+# graph["10.0.0.1"] = ["10.0.0.2", "10.0.0.3"]
+# graph["10.0.0.2"] = ["10.0.0.1", "10.0.0.3"]
+# graph["10.0.0.3"] = ["10.0.0.1", "10.0.0.2"]
+# graph["10.0.0.4"] = ["10.0.0.1", "10.0.0.3"]
+
 print("Created network graph.")
 
 # Create nodes for the virtual network
