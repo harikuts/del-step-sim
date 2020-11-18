@@ -15,6 +15,7 @@ class Console:
         self.clients = clientDict
         self.cmd_queue = []
         self.groups = {}
+        self.automatic_net_flag = False
         pass
     def run(self):
         while True:
@@ -37,11 +38,15 @@ class Console:
                         self.step()
                     else:
                         self.istep(cmd[1])
+                # Network processes step
                 elif cmd[0] == "nstep":
                     if len(cmd) == 1:
                         self.nstep()
                     else:
                         self.instep(cmd[1])
+                # Switch for auto net processes after each command
+                elif cmd[0] == "autonet":
+                    self.toggle_autonet()
                 elif cmd[0] == "train":
                     if len(cmd) == 1:
                         self.tstep()
@@ -84,9 +89,10 @@ class Console:
                         print("Group command invalid.")
                 else:
                     print("Command does not exist.")
-                # Process network step
-                self.nstep()
-                print("Network processes executed.")
+                # Process network step if auto net
+                if self.automatic_net_flag:
+                    self.nstep()
+                    print("Network processes executed.")
             except Exception as e:
                 print("Command did not work. Check arguments.")
                 print(e)
@@ -109,6 +115,9 @@ class Console:
             client.net.step()
         for client in self.clients.values():
             client.net.step()
+    def toggle_autonet(self):
+        self.automatic_net_flag = not self.automatic_net_flag
+        print ("Automatic network processes", ("enabled" if self.automatic_net_flag else "disabled"))
     def tstep(self):
         for client in self.clients.values():
             client.train_model()
