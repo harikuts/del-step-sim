@@ -21,6 +21,8 @@ class Console:
         while True:
             # Process command
             try:
+                # Any inits go here
+                switch_autonet = None
                 # If cmd_queue is not empty, pop a command
                 if len(self.cmd_queue):
                     cmd = self.cmd_queue.pop(0)
@@ -46,7 +48,7 @@ class Console:
                         self.instep(cmd[1])
                 # Switch for auto net processes after each command
                 elif cmd[0] == "autonet":
-                    self.toggle_autonet()
+                    switch_autonet = self.toggle_autonet()
                 elif cmd[0] == "train":
                     if len(cmd) == 1:
                         self.tstep()
@@ -93,6 +95,8 @@ class Console:
                 if self.automatic_net_flag:
                     self.nstep()
                     print("Network processes executed.")
+                if switch_autonet is not None:
+                    self.automatic_net_flag = switch_autonet
             except Exception as e:
                 print("Command did not work. Check arguments.")
                 print(e)
@@ -116,8 +120,9 @@ class Console:
         for client in self.clients.values():
             client.net.step()
     def toggle_autonet(self):
-        self.automatic_net_flag = not self.automatic_net_flag
-        print ("Automatic network processes", ("enabled" if self.automatic_net_flag else "disabled"))
+        will_toggle = not self.automatic_net_flag
+        print ("Automatic network processes", ("enabled" if will_toggle else "disabled"))
+        return will_toggle
     def tstep(self):
         for client in self.clients.values():
             client.train_model()
