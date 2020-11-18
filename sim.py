@@ -66,17 +66,22 @@ class Console:
                     if cmd[1] == "list":
                         print("Active groups:", self.groups.keys())
                     # List members of a group
-                    if cmd[1] == "roster":
-                        print(self.get_group_roster(cmd[1]))
+                    elif cmd[1] == "roster":
+                        print(self.get_group_roster(cmd[2]))
                     # Create new group
-                    if cmd[1] == "new":
+                    elif cmd[1] == "create":
                         self.groups[cmd[2]] = []
                     # Add member to a group
-                    if cmd[1] == "add":
+                    elif cmd[1] == "add":
                         self.group_add(cmd[2], cmd[3:])
                     # Remove member from a group
-                    if cmd[1] == "remove":
+                    elif cmd[1] == "remove":
                         self.group_remove(cmd[2], cmd[3:])
+                    # See IP's membership
+                    elif cmd[1] == "membership":
+                        self.group_membership(cmd[2])
+                    else:
+                        print("Group command invalid.")
                 else:
                     print("Command does not exist.")
                 # Process network step
