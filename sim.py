@@ -87,8 +87,11 @@ class Console:
                     # See IP's membership
                     elif cmd[1] == "membership":
                         self.group_membership(cmd[2])
+                    # Share within a group
                     elif cmd[1] == "share":
-                        self.group_share[cmd[2]]
+                        self.group_share(cmd[2])
+                    # Train within a group
+                    # Aggregate within a group
                     else:
                         print("Group command invalid.")
                 else:
@@ -213,6 +216,13 @@ graph = {}
 # graph["10.0.0.3"] = ["10.0.0.1", "10.0.0.2"]
 # graph["10.0.0.4"] = ["10.0.0.1", "10.0.0.3"]
 
+from dummy_net import build_fully_connected_graph
+
+nodes = ["10.0.0.1", "10.0.0.2", "10.0.0.3", "10.0.0.4", "10.0.0.5"]
+for node in nodes:
+    graph[node] = []
+graph = build_fully_connected_graph(graph)
+
 print("Created network graph.")
 
 # Create nodes for the virtual network
@@ -226,7 +236,7 @@ for addr in graph.keys():
 print("Registered nodes in network graph.")
 
 # Create Incubator with data ratios
-MI = ModelIncubator([0.5, 0.3, 0.2])
+MI = ModelIncubator([0.2, 0.1, 0.2, 0.3, 0.2])
 
 # Create clients
 clientDict = {}

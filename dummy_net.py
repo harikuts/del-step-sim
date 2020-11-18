@@ -108,3 +108,13 @@ class DummyNet:
         except:
             self.print_("No messages.")
             return None
+
+# This function takes a graph of ["node": ["neighbors"]] and makes it fully connected
+def build_fully_connected_graph(graph):
+    all_nodes = list(graph.keys())
+    # For each node set all other nodes to be its neighbors
+    for node in all_nodes:
+        neighbors = all_nodes[:]
+        neighbors.remove(node)
+        graph[node] = neighbors
+    return graph
