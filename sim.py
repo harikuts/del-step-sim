@@ -91,6 +91,8 @@ class Console:
                     elif cmd[1] == "share":
                         self.group_share(cmd[2])
                     # Train within a group
+                    elif cmd[1] == "train":
+                        self.group_train(cmd[2])
                     # Aggregate within a group
                     else:
                         print("Group command invalid.")
@@ -128,8 +130,10 @@ class Console:
         will_toggle = not self.automatic_net_flag
         print ("Automatic network processes", ("enabled" if will_toggle else "disabled"))
         return will_toggle
-    def tstep(self):
-        for client in self.clients.values():
+    def tstep(self, subset=None):
+        nodeset = self.clients.keys() if subset is None else subset
+        selected_clients = [self.clients[addr] for addr in nodeset]
+        for client in selected_clients:
             client.train_model()
     def floodall(self):
         for client in self.clients.values():
@@ -203,6 +207,12 @@ class Console:
                 for node2 in members:
                     # self.exchange(node1, node2)
                     print("Exchanging between", node1, "and", node2)
+                    self.exchange(node1, node2)
+        else:
+            print("Group name not valid. Current groups:", self.groups.keys())
+    def group_train(self, groupname):
+        if groupname in self.groups.keys():
+            self.tstep(subset=self.groups[groupname])
         else:
             print("Group name not valid. Current groups:", self.groups.keys())
 
