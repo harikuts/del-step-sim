@@ -34,17 +34,21 @@ This simulator uses a modified model aggregation algorithm.
 
 ## Interface
 
-## Steps
-
-### *step*: Training Step
-
-### *nstep*: Network Step
+### *neighborhood*
 
 ## Learning
 
-### Training
+### *train*
 
-### Testing
+### *test*
+
+## Steps
+
+### *step*
+
+### *nstep*
+
+### *autonet*
 
 ## Communicating Models
 
@@ -54,6 +58,24 @@ This simulator uses a modified model aggregation algorithm.
 
 ## Group-Level Commands
 
+### *list*
+
+### *roster*
+
+### *create*
+
+### *add*
+
+### *remove*
+
+### *membership*
+
+### *share*
+
+### *train*
+
 ## Scripting
+
+### *load*
 
 # Files
