@@ -26,11 +26,23 @@ This simulator is currently based on decentralized *federated* learning.
 
 ### Model Aggregation
 
-This simulator uses a modified model aggregation algorithm.
+This simulator uses a modified model aggregation algorithm, in order to account for recent interactions between nodes more common in real-world deployments. This algorithm relies on an encounter tracking table. This mechanism is explained below, along with paramterization that allows for a gradient of behaviors from standard aggregation to this modified aggregation.
+
+*More information coming soon*
 
 # Runtime Commands
 
+The following includes all commands currently in the simulator. To best understand the use of these commands, the user must understand the proper scope of each command.
+
 ### Scopes
+
+Most commands in the simulator operate in one of three scopes:
+* _System-level operations_ involve the entire system -- the network graph itself and all nodes and connections within the graph. These commands usually involve commands with the simulator interface, settting simulation parameters, and multi-level operations (like steps).
+* _Internode-level operations_ involve operations that occur between nodes -- model exchanges and other communications. These commands usually have to do with transmission of model information.
+* _Node-level operations_ involve operations that occur within the node. These operations are usually individual counterparts to other operations, such as individual steps, individual information, individual training and testing, etc.
+
+Along with those scopes, this simulator also features an additional setting, if desired:
+* _Group-level operations_ involve user-defined groups of nodes within the network graph. These operations include many of the same ones in the other scopes but occur within a specified group.
 
 ## Interface
 
