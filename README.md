@@ -30,7 +30,7 @@ This simulator uses a modified model aggregation algorithm, in order to account 
 
 *More information coming soon*
 
-# Runtime Commands
+## Runtime Commands
 
 The following includes all commands currently in the simulator. To best understand the use of these commands, the user must understand the proper scope of each command.
 
@@ -44,23 +44,23 @@ Most commands in the simulator operate in one of three scopes:
 Along with those scopes, this simulator also features an additional setting, if desired:
 * _Group-level operations_ involve user-defined groups of nodes within the network graph. These operations include many of the same ones in the other scopes but occur within a specified group.
 
-## Interface
+### Interface
 The following commands are used to view information about the simulation itself.
 
-### *neighborhood*
+#### *neighborhood*
 **Usage:** `neighborhood`
 
 This command shows you all nodes currently in the system.
 
-### *guestbook*
+#### *guestbook*
 **Usage:** `guestbook [node]`
 
 This command shows you all network-connected neighbors of the specified node `[node]*`.
 
-## Learning
+### Learning
 The following commands are used to train, aggregate, and evaluate the models within each node.
 
-### *train*
+#### *train*
 **Usage:** `train [node]`
 
 This command deploys the training process within the specified node `[node]`. The training process involves running one iteration of the learning model within the node on local data.
@@ -69,42 +69,45 @@ This command deploys the training process within the specified node `[node]`. Th
 
 This command by itself runs the training process in all nodes within the system.
 
-### *test*
+#### *test*
+**Usage:** `test [node]`
 
-## Steps
+This command deploys the model evaluation process within the specified node `[node]`. The process calls `evaluate` method of the Tensorflow model within the node.
 
-### *step*
+### Steps
 
-### *nstep*
+#### *step*
 
-### *autonet*
+#### *nstep*
 
-## Communicating Models
+#### *autonet*
 
-### *exchange*
+### Communicating Models
 
-### *flood*
+#### *exchange*
 
-## Group-Level Commands
+#### *flood*
 
-### *list*
+### Group-Level Commands
 
-### *roster*
+#### *list*
 
-### *create*
+#### *roster*
 
-### *add*
+#### *create*
 
-### *remove*
+#### *add*
 
-### *membership*
+#### *remove*
 
-### *share*
+#### *membership*
 
-### *train*
+#### *share*
 
-## Scripting
+#### *train*
 
-### *load*
+### Scripting
 
-# Files
+#### *load*
+
+## Files
