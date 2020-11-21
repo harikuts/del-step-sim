@@ -37,16 +37,22 @@ The following includes all commands currently in the simulator. To best understa
 ### Scopes
 
 Most commands in the simulator operate in one of three scopes:
-* _System-level operations_ involve the entire system -- the network graph itself and all nodes and connections within the graph. These commands usually involve commands with the simulator interface, settting simulation parameters, and multi-level operations (like steps).
-* _Internode-level operations_ involve operations that occur between nodes -- model exchanges and other communications. These commands usually have to do with transmission of model information.
-* _Node-level operations_ involve operations that occur within the node. These operations are usually individual counterparts to other operations, such as individual steps, individual information, individual training and testing, etc.
+* **System-level operations** involve the entire system -- the network graph itself and all nodes and connections within the graph. These commands usually involve commands with the simulator interface, settting simulation parameters, and multi-level operations (like steps).
+* **Internode-level operations** involve operations that occur between nodes -- model exchanges and other communications. These commands usually have to do with transmission of model information.
+* **Node-level operations** involve operations that occur within the node. These operations are usually individual counterparts to other operations, such as individual steps, individual information, individual training and testing, etc.
 
 Along with those scopes, this simulator also features an additional setting, if desired:
 * _Group-level operations_ involve user-defined groups of nodes within the network graph. These operations include many of the same ones in the other scopes but occur within a specified group.
 
 ## Interface
-
+The following commands are used to view information about the simulation itself.
 ### *neighborhood*
+**Usage:** `neighborhood`
+This command shows you all nodes currently in the system.
+
+### *guestbook*
+**Usage** `guestbook [node]`
+This command shows you all network-connected neighbors of the specified node *[node]*.
 
 ## Learning
 
