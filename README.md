@@ -46,17 +46,28 @@ Along with those scopes, this simulator also features an additional setting, if 
 
 ## Interface
 The following commands are used to view information about the simulation itself.
+
 ### *neighborhood*
 **Usage:** `neighborhood`
+
 This command shows you all nodes currently in the system.
 
 ### *guestbook*
-**Usage** `guestbook [node]`
-This command shows you all network-connected neighbors of the specified node *[node]*.
+**Usage:** `guestbook [node]`
+
+This command shows you all network-connected neighbors of the specified node `[node]*`.
 
 ## Learning
+The following commands are used to train, aggregate, and evaluate the models within each node.
 
 ### *train*
+**Usage:** `train [node]`
+
+This command deploys the training process within the specified node `[node]`. The training process involves running one iteration of the learning model within the node on local data.
+
+**Usage:** `train`
+
+This command by itself runs the training process in all nodes within the system.
 
 ### *test*
 
