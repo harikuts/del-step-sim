@@ -200,6 +200,6 @@ The above example individually trains two nodes, *10.0.0.1* and *10.0.0.2*, exch
 
 **Usage:** `load [script]'
 
-Runs a script with filename `[script]' and by queueing commands from the script.
+Runs a script with filename `[script]` and by queueing commands from the script.
 
 ## Files
