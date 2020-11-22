@@ -126,28 +126,80 @@ This command has the specified node `[node]` transmit models to all its graph-co
 
 **Usage:** `flood`
 
-All nodes within the simulation flood all their nieghbors. ++This command is not recommended++  as there are no communication redundancy checks in place.
+All nodes within the simulation flood all their nieghbors. __This command is not recommended__  as there are no communication redundancy checks in place.
 
 ### Group-Level Commands
 
+Group-level operatability was introduced to perform experiments within groups within the larger system. Eventually, all major commands will have group-level counter parts.
+
 #### *list*
+
+**Usage:** `group list`
+
+This command is used to view all groups currently in the system.
 
 #### *roster*
 
-#### *create*
+**Usage:** `group roster [group]`
 
-#### *add*
-
-#### *remove*
+This command is used to display all members of the specified group `[group]`.
 
 #### *membership*
 
+**Usage:** `group membership [node]`
+
+This command is used to view what groups the node `[node]` is a part of. A single node can have membership in multiple groups.
+
+#### *create*
+
+**Usage:** `group create [groupname]`
+
+This command creates a new group with the name `[groupname]`. If a group already exists with this name, it will be overwritten.
+
+#### *add*
+
+**Usage:** `group [group] add [list of nodes]`
+
+This commands adds all nodes listed in `[list of nodes]` to the group `[group]`.
+
+#### *remove*
+
+**Usage:** `group [group] remove [list of nodes]`
+
+This command removes all nodes listend in `[list of nodes]` from the group `[group]`.
+
 #### *share*
+
+**Usage:** `group [group] share`
+
+This command facilitates every possible model exchange within the group `[group]`, such that each node has exchanged once with all other nodes. Redundancy is accounted for.
 
 #### *train*
 
+**Usage:** `group [group] train`
+
+This command performs a training step on each node within the group `[group]`.
+
 ### Scripting
 
+This simulator also allows the user to create scripts as a list of commands to execute. Commands are written with each executable command and arguments written per line. Commands in a script are queued for execution in the simulator.
+
+***Example:***
+```
+train 10.0.0.1
+train 10.0.0.2
+exchange 10.0.0.1 10.0.0.2
+step
+test 10.0.0.1
+test 10.0.0.2
+```
+
+The above example individually trains two nodes, *10.0.0.1* and *10.0.0.2*, exchanges model information between them, uses a general processing step to aggregate the newly found model information within each node, then evaluates each of the nodes.
+
 #### *load*
+
+**Usage:** `load [script]'
+
+Runs a script with filename `[script]' and by queueing commands from the script.
 
 ## Files
