@@ -84,6 +84,9 @@ class Console:
                     # Create new group
                     elif cmd[1] == "create":
                         self.groups[cmd[2]] = []
+                    # Update network graph connections
+                    elif cmd[1] == "connect":
+                        self.update_group_connections()
                     # GROUP LEVEL COMMANDS
                     # Add member to a group
                     elif cmd[1] in self.groups:
@@ -227,6 +230,8 @@ class Console:
             self.tstep(subset=self.groups[groupname])
         else:
             print("Group name not valid. Current groups:", self.groups.keys())
+    def update_group_connections(self):
+        pass
 
 import time
 from datetime import datetime
