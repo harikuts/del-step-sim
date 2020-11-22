@@ -53,7 +53,7 @@ The following commands are used to view information about the simulation itself.
 This command shows you all nodes currently in the system.
 
 #### *guestbook*
-**Usage:** `guestbook [node]`
+**Usage:** `guestbook [node]     `
 
 This command shows you all network-connected neighbors of the specified node `[node]*`.
 
@@ -76,17 +76,57 @@ This command deploys the model evaluation process within the specified node `[no
 
 ### Steps
 
+Steps are the main mechanisms employed to advance the simulation. There are 3 types of step behaviors -- training steps, aggregation steps, and network steps. However, the actual implementation of these behaviors is currently through `step`, a combination training and aggregation step, and `nstep`, the network step.
+
 #### *step*
+
+This step serves as a general processing step. If there is new model information that has just been received, then this step runs model aggregation. If not, then the model is trained, as done with `train`.
+
+**Usage:** `step [node]`
+
+Runs the general processing step on the specified node `[node]`.
+
+**Usage:** `step`
+
+Runs the general processing step on all nodes in the system.
 
 #### *nstep*
 
+This step is the network processing step. Until this step is executed, information that is to be sent waits at output buffers of each node. When this step is executed, all network events that have been queued up are enacted in the order they were queued. This is the main step metric for simulation advancement.
+
+**Usage:** `nstep [node]`
+
+Runs the network processing step on the specified node `[node]`.
+
+**Usage:** `nstep`
+
+Runs the network processing step on all nodes in the system.
+
 #### *autonet*
+
+**Usage:** `autonet`
+
+Toggles automatic network processing after each commands and will return the current status of this toggle once command is used. Enabling autonet is useful if you're not worried specifically about controlling network elements and are focused solely on model performance.
 
 ### Communicating Models
 
+The following commands involve transmission of model information between nodes.
+
 #### *exchange*
 
+**Usage:** `exchange [node1] [node2]`
+
+This command enacts an exchange of model information between `[node1]` amd `[node2]`.
+
 #### *flood*
+
+**Usage:** `flood [node]`
+
+This command has the specified node `[node]` transmit models to all its graph-connected neighbors.
+
+**Usage:** `flood`
+
+All nodes within the simulation flood all their nieghbors. ++This command is not recommended++  as there are no communication redundancy checks in place.
 
 ### Group-Level Commands
 
