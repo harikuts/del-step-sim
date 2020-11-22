@@ -13,8 +13,11 @@ import threading
 class Console:
     def __init__(self, clientDict):
         self.clients = clientDict
+        # Init command processing
         self.cmd_queue = []
+        # Init groups and command list
         self.groups = {}
+        self.group_commands = {'list', 'roster', 'create', 'membership'}
         self.automatic_net_flag = False
         pass
     def run(self):
@@ -75,25 +78,31 @@ class Console:
                     # List members of a group
                     elif cmd[1] == "roster":
                         print(self.get_group_roster(cmd[2]))
-                    # Create new group
-                    elif cmd[1] == "create":
-                        self.groups[cmd[2]] = []
-                    # Add member to a group
-                    elif cmd[1] == "add":
-                        self.group_add(cmd[2], cmd[3:])
-                    # Remove member from a group
-                    elif cmd[1] == "remove":
-                        self.group_remove(cmd[2], cmd[3:])
                     # See IP's membership
                     elif cmd[1] == "membership":
                         self.group_membership(cmd[2])
-                    # Share within a group
-                    elif cmd[1] == "share":
-                        self.group_share(cmd[2])
-                    # Train within a group
-                    elif cmd[1] == "train":
-                        self.group_train(cmd[2])
-                    # Aggregate within a group
+                    # Create new group
+                    elif cmd[1] == "create":
+                        self.groups[cmd[2]] = []
+                    # GROUP LEVEL COMMANDS
+                    # Add member to a group
+                    elif cmd[1] in self.groups:
+                        groupname = cmd[1]
+                        if cmd[2] == "add":
+                            self.group_add(groupname, cmd[3:])
+                        # Remove member from a group
+                        elif cmd[2] == "remove":
+                            self.group_remove(groupname, cmd[3:])
+                        # Share within a group
+                        elif cmd[2] == "share":
+                            self.group_share(groupname)
+                        # Train within a group
+                        elif cmd[2] == "train":
+                            self.group_train(groupname)
+                        # Aggregate within a group
+                        # Report error
+                        else:
+                            print("Not a valid group-specific command.")
                     else:
                         print("Group command invalid.")
                 else:
@@ -165,7 +174,10 @@ class Console:
         else:
             print("Group name not valid. Current groups:", self.groups.keys())
     def create_group(self, name):
-        self.groups[name] = []
+        if name not in self.group_commands:
+            self.groups[name] = []
+        else:
+            print("Name not allowed as it is reserved for commands.")
         print("Current groups:", self.groups.keys())
     def group_add(self, groupname, iplist):
         if groupname in self.groups.keys():
