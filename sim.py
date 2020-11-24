@@ -19,6 +19,8 @@ class Console:
         self.groups = {}
         self.group_commands = {'list', 'roster', 'create', 'membership'}
         self.automatic_net_flag = False
+        # Simulation Cycles
+        self.cur_cycle = 0
         pass
     def run(self):
         while True:
