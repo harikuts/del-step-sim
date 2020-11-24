@@ -5,6 +5,7 @@ import pdb
 class Log:
     def __init__(self):
         self.entries = []
+        self.cur_counter = -1
         self.new_step()
 
     def add_entry(self, entry):
@@ -13,6 +14,10 @@ class Log:
     def new_step(self):
         # Will carry a list of log entries each
         self.entries.append([])
+        self.cur_counter += 1
+
+    def current_cycle(self):
+        return self.cur_counter
 
 class Entry:
     def __init__(self, cur_cycle):
