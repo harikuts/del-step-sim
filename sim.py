@@ -8,8 +8,19 @@ from learning_module import Model
 
 from client import Client
 
+import logger
+
 import threading
 
+# Command Error (to be used within console)
+class CommandError(BaseException):
+    def __init__(self, error_message=None):
+        super().__init__()
+        self.error_message = error_message
+    def __str__(self):
+        return("CommandError:", self.error_message)
+
+# The main console
 class Console:
     def __init__(self, clientDict):
         self.clients = clientDict
@@ -19,12 +30,11 @@ class Console:
         self.groups = {}
         self.group_commands = {'list', 'roster', 'create', 'membership'}
         self.automatic_net_flag = False
-        # Simulation Cycles
-        self.cur_cycle = 0
         pass
     def run(self):
         while True:
             # Process command
+            # Begin tracking for logging
             try:
                 # Any inits go here
                 switch_autonet = None
@@ -107,11 +117,12 @@ class Console:
                         # Aggregate within a group
                         # Report error
                         else:
-                            print("Not a valid group-specific command.")
+                            raise CommandError("Not a valid group-specific command.")
                     else:
-                        print("Group command invalid.")
+                        raise CommandError("Group command invalid.")
                 else:
                     print("Command does not exist.")
+                    raise CommandError
                 # Process network step if auto net
                 if self.automatic_net_flag:
                     self.nstep()
@@ -119,8 +130,9 @@ class Console:
                 if switch_autonet is not None:
                     self.automatic_net_flag = switch_autonet
             except Exception as e:
-                print("Command did not work. Check arguments.")
+                print("Command did not work.")
                 print(e)
+
     # SCRIPTING
     def load_script(self, filename):
         try:
