@@ -85,7 +85,10 @@ class Console:
                 elif cmd[0] == "guestbook":
                     self.iguest(cmd[1])
                 elif cmd[0] == "test":
-                    self.test(cmd[1])
+                    if len(cmd) == 1:
+                        self.test_all()
+                    else:
+                        self.test(cmd[1])
                 # Group commands
                 elif cmd[0] == "group":
                     # List all groups
@@ -128,7 +131,13 @@ class Console:
                 elif cmd[0] == "cycle":
                     self.next_cycle()
                 elif cmd[0] == "log":
-                    self.log_all()
+                    if len(cmd) == 1:
+                        self.log_all()
+                    else:
+                        if cmd[1] == "results":
+                            self.log_results()
+                        else:
+                            raise CommandError("Log command invalid.")
                 else:
                     raise CommandError("Command does not exist.")
                 # Process network step if auto net
@@ -145,6 +154,7 @@ class Console:
                 self.log.NewEntry.set_success(False)
             except Exception as e:
                 print("Command did not work. Please check arguments.")
+                print(str(e))
                 self.log.NewEntry.set_success(False)
             # Commit to log
             self.log.commitEntry()
@@ -201,6 +211,10 @@ class Console:
     def test(self, ip):
         results = self.clients[ip].model.test()
         print("LOSS:", results[0], "ACCURACY:", results[1])
+        self.log.commitResult(ip, results)
+    def test_all(self):
+        for address in list(self.clients.keys()):
+            self.test(address)
     # GROUP COMMANDS
     def get_group_roster(self, groupname):
         if groupname in self.groups.keys():
@@ -268,6 +282,8 @@ class Console:
         self.log.new_step()
     def log_all(self):
         self.log.printLog()
+    def log_results(self):
+        self.log.printResults()
 
 import time
 from datetime import datetime

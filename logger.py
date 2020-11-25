@@ -12,7 +12,7 @@ class Log:
         # Set current counter and take the first step to initalize
         self.cur_counter = -1
         self.new_step()
-        # Set NewEntry
+        # Set entries
         self.NewEntry = None
     # Begin NewEntry, has to be called with the class constructor
     def beginEntry(self, constructor):
@@ -29,6 +29,10 @@ class Log:
             self.NewEntry = None
         else:
             raise LogError
+    # Result entries don't need a add and commit, they are just directly added
+    def commitResult(self, node, results):
+        newResult = ResultEntry(self.current_cycle(), node, results)
+        self.cycles[self.current_cycle()].append(newResult)
     # New step advances the simulation (for the sake of records)
     def new_step(self):
         # Append a new cycle (empty list of entries) and increment counter
@@ -50,6 +54,21 @@ class Log:
                 lines.append(str(entry))
         corpus = '\n'.join(lines)
         print(corpus)
+    # Get results only
+    def getResults(self):
+        results = []
+        for cycle in self.cycles:
+            for entry in cycle:
+                if isinstance(entry, ResultEntry):
+                    results.append(entry)
+        return results
+    # Print results only
+    def printResults(self):
+        results = self.getResults()
+        lines = [str(result) for result in results]
+        corpus = '\n'.join(lines)
+        print(corpus)
+
 
 class Entry:
     def __init__(self, cur_cycle):
@@ -86,17 +105,18 @@ class CommandEntry(Entry):
     def get_entry(self):
         return("%d,COMMAND,%s,%s" % (self.cycle, ("OK" if self.success else "ER"), self.commandString))
     def __str__(self):
-        return("%d\tCOMMAND\t[%s]\t%s" % (self.cycle, ("OK" if self.success else "ER"), self.commandString))
+        return("%d\tCOMMAND\t%s\t[%s]" % (self.cycle, ("OK" if self.success else "ER"), self.commandString))
 
 class ResultEntry(Entry):
     def __init__(self, cur_cycle, node, value_list):
         super().__init__(cur_cycle)
         self.node = node
         self.values = value_list
+        self.str_values = [str(value) for value in value_list]
     def get_entry(self):
-        return("RESULT,%d,%s,%s" % (self.cycle, self.node, ','.join(self.values)))
+        return("%d,RESULT,%s,%s" % (self.cycle, self.node, ','.join(self.str_values)))
     def __str__(self):
-        return("RESULT\t%d\t%s\t%s" % (self.cycle, self.node, '\t'.join(self.values)))
+        return("%d\tRESULT\t%s\t%s" % (self.cycle, self.node, '\t'.join(self.str_values)))
 
 # Test the logger
 if __name__ == "__main__":
