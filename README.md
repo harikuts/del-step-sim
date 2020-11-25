@@ -24,11 +24,13 @@ DEL-Step is a Python-based step-by-step simulator meant to be used as a playgrou
 
 This simulator is currently based on decentralized *federated* learning.
 
+*More information coming soon.*
+
 ### Model Aggregation
 
 This simulator uses a modified model aggregation algorithm, in order to account for recent interactions between nodes more common in real-world deployments. This algorithm relies on an encounter tracking table. This mechanism is explained below, along with paramterization that allows for a gradient of behaviors from standard aggregation to this modified aggregation.
 
-*More information coming soon*
+*More information coming soon.*
 
 ## Runtime Commands
 
@@ -73,6 +75,10 @@ This command by itself runs the training process in all nodes within the system.
 **Usage:** `test [node]`
 
 This command deploys the model evaluation process within the specified node `[node]`. The process calls `evaluate` method of the Tensorflow model within the node.
+
+**Usage:** `test`
+
+This command by itself runs tests on all nodes within the system.
 
 ### Steps
 
@@ -180,6 +186,20 @@ This command facilitates every possible model exchange within the group `[group]
 
 This command performs a training step on each node within the group `[group]`.
 
+### Logging
+
+These commands involve logging and saving information and results from the simulator.
+
+#### *log*
+
+**Usage:** `log`
+
+This command returns a full log of all commands and results that have been executed in the simulation thus far.
+
+**Usage:** `log results`
+
+This command returns a log of only results that have been obtained from the simulation thus far.
+
 ### Scripting
 
 This simulator also allows the user to create scripts as a list of commands to execute. Commands are written with each executable command and arguments written per line. Commands in a script are queued for execution in the simulator.
@@ -198,8 +218,8 @@ The above example individually trains two nodes, *10.0.0.1* and *10.0.0.2*, exch
 
 #### *load*
 
-**Usage:** `load [script]'
+**Usage:** `load [script]`
 
-Runs a script with filename `[script]` and by queueing commands from the script.
+Runs a script with filename `[script]` and queues commands from the script for the simulator to execute.
 
 ## Files
