@@ -42,6 +42,14 @@ class Log:
         except:
             raise LogError
         return self.cur_counter
+    # Prints entire log
+    def printLog(self):
+        lines = []
+        for cycle in self.cycles:
+            for entry in cycle:
+                lines.append(str(entry))
+        corpus = '\n'.join(lines)
+        print(corpus)
 
 class Entry:
     def __init__(self, cur_cycle):
@@ -71,14 +79,14 @@ class CommandEntry(Entry):
     # Verify all fields are completed
     def verify_complete(self):
         # Compile a list of required fields and check if they've been completed
-        required_fields = [self.commandString, self.involved_nodes, self.success]
+        required_fields = [self.commandString, self.success]
         fields_complete = [True if val is not None else False for val in required_fields]
         return True if all(fields_complete) else False
     # REPORTING
     def get_entry(self):
-        return("COMMAND,%d,%s,%s" % (self.cycle, self.commandString, ("OK" if self.success else "ERROR")))
+        return("%d,COMMAND,%s,%s" % (self.cycle, ("OK" if self.success else "ER"), self.commandString))
     def __str__(self):
-        return("COMMAND\t%d\t%s\t%s" % (self.cycle, self.commandString, ("OK" if self.success else "ERROR")))
+        return("%d\tCOMMAND\t[%s]\t%s" % (self.cycle, ("OK" if self.success else "ER"), self.commandString))
 
 class ResultEntry(Entry):
     def __init__(self, cur_cycle, node, value_list):

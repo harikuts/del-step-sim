@@ -15,10 +15,9 @@ import threading
 # Command Error (to be used within console)
 class CommandError(BaseException):
     def __init__(self, error_message=None):
-        super().__init__()
         self.error_message = error_message
     def __str__(self):
-        return("CommandError:", self.error_message)
+        return("CommandError: " + self.error_message)
 
 # The main console
 class Console:
@@ -30,11 +29,13 @@ class Console:
         self.groups = {}
         self.group_commands = {'list', 'roster', 'create', 'membership'}
         self.automatic_net_flag = False
-        pass
+        # Init log
+        self.log = logger.Log()
     def run(self):
         while True:
             # Process command
             # Begin tracking for logging
+            self.log.beginEntry(logger.CommandEntry)
             try:
                 # Any inits go here
                 switch_autonet = None
@@ -44,6 +45,9 @@ class Console:
                     print("\nQ>" + cmd)
                 else:
                     cmd = input("\n>>")
+                # Record command
+                self.log.NewEntry.set_cmd(cmd.strip())
+                # Process command
                 cmd = cmd.strip().split(" ")
                 cmd = [c.strip() for c in cmd]
                 if cmd[0] == "exit":
@@ -120,26 +124,39 @@ class Console:
                             raise CommandError("Not a valid group-specific command.")
                     else:
                         raise CommandError("Group command invalid.")
+                # Log commands
+                elif cmd[0] == "cycle":
+                    self.next_cycle()
+                elif cmd[0] == "log":
+                    self.log_all()
                 else:
-                    print("Command does not exist.")
-                    raise CommandError
+                    raise CommandError("Command does not exist.")
                 # Process network step if auto net
                 if self.automatic_net_flag:
                     self.nstep()
                     print("Network processes executed.")
                 if switch_autonet is not None:
                     self.automatic_net_flag = switch_autonet
-            except Exception as e:
-                print("Command did not work.")
-                print(e)
+                # If we made it to the end of the command loop, we're successful
+                self.log.NewEntry.set_success(True)
+            except CommandError as e:
+                print("Command did not work:")
+                print(str(e))
+                self.log.NewEntry.set_success(False)
+            except IndexError as e:
+                print("Command did not work. Please check arguments.")
+                self.log.NewEntry.set_success(False)
+            # Commit to log
+            self.log.commitEntry()
 
+    # COMMAND OPERATIONS
     # SCRIPTING
     def load_script(self, filename):
         try:
             with open(filename, "r") as f:
                 self.cmd_queue = self.cmd_queue + f.readlines()
         except:
-            print("Failed to load file: " + filename)
+            raise CommandError("Failed to load file: " + filename)
     # SYSTEM LEVEL COMMANDS
     def get_all_addrs(self):
         return str(list(self.clients.keys()))
@@ -189,13 +206,13 @@ class Console:
         if groupname in self.groups.keys():
             return self.groups[groupname]
         else:
-            print("Group name not valid. Current groups:", self.groups.keys())
+            raise CommandError("Group name not valid. Current groups: " + str(self.groups.keys()))
     def create_group(self, name):
         if name not in self.group_commands:
             self.groups[name] = []
         else:
-            print("Name not allowed as it is reserved for commands.")
-        print("Current groups:", self.groups.keys())
+            raise CommandError("Name not allowed as it is reserved for commands.")
+        # print("Current groups:", self.groups.keys())
     def group_add(self, groupname, iplist):
         if groupname in self.groups.keys():
             for ip in iplist:
@@ -203,10 +220,10 @@ class Console:
                     self.groups[groupname].append(ip)
                     print("Added", ip)
                 else:
-                    print("IP address ", ip, "not valid.")
+                    raise CommandError("IP address " + ip + " not valid.")
                 print("Updated roster:", self.groups[groupname])
         else:
-            print("Group name not valid. Current groups:", self.groups.keys())
+            raise CommandError("Group name not valid. Current groups: " + str(self.groups.keys()))
     def group_remove(self, groupname, iplist):
         if groupname in self.groups.keys():
             for ip in iplist:
@@ -215,9 +232,9 @@ class Console:
                     print("Removed", ip)
                 else:
                     print("IP address ", ip, "not found in group.")
-                print("Updated roster:", self.groups[groupname])
+                raise CommandError("Updated roster:" + str(self.groups[groupname]))
         else:
-            print("Group name not valid. Current groups:", self.groups.keys())
+            raise CommandError("Group name not valid. Current groups: " + str(self.groups.keys()))
     def group_membership(self, ip):
         if ip in self.clients.keys():
             memberships = []
@@ -226,7 +243,7 @@ class Console:
                     memberships.append(group)
             print(ip, "is a member of:", memberships)
         else:
-            print("IP address not valid.")
+            raise CommandError("IP address not valid.")
     def group_share(self, groupname):
         if groupname in self.groups.keys():
             members = self.groups[groupname][:]
@@ -238,14 +255,19 @@ class Console:
                     print("Exchanging between", node1, "and", node2)
                     self.exchange(node1, node2)
         else:
-            print("Group name not valid. Current groups:", self.groups.keys())
+            raise CommandError("Group name not valid. Current groups: " + str(self.groups.keys()))
     def group_train(self, groupname):
         if groupname in self.groups.keys():
             self.tstep(subset=self.groups[groupname])
         else:
-            print("Group name not valid. Current groups:", self.groups.keys())
+            raise CommandError("Group name not valid. Current groups: " + str(self.groups.keys()))
     def update_group_connections(self):
         pass
+    # LOG COMMANDS
+    def next_cycle(self):
+        self.log.new_step()
+    def log_all(self):
+        self.log.printLog()
 
 import time
 from datetime import datetime
