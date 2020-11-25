@@ -32,6 +32,28 @@ This simulator uses a modified model aggregation algorithm, in order to account 
 
 *More information coming soon.*
 
+## Using the Simulator
+
+### Installation and Requirements
+
+Running the simulator has only a few installation requirements:
+* Python 3.x
+* Tensorflow 2.x
+* NumPy
+
+Once these requirements are satisified, and this repository has been cloned, no further installation is necessary.
+
+### Preparing the Learning Module
+
+*Information coming soon. For now, the learning module has already been built with the MNIST dataset and a simple neural network.*
+
+### Running Simulation
+
+To run the simulator, simply run the following command.
+```
+python sim.py
+```
+
 ## Runtime Commands
 
 The following includes all commands currently in the simulator. To best understand the use of these commands, the user must understand the proper scope of each command.
