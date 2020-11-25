@@ -143,7 +143,7 @@ class Console:
                 print("Command did not work:")
                 print(str(e))
                 self.log.NewEntry.set_success(False)
-            except IndexError as e:
+            except Exception as e:
                 print("Command did not work. Please check arguments.")
                 self.log.NewEntry.set_success(False)
             # Commit to log
