@@ -7,6 +7,8 @@ import tensorflow as tf
 import numpy as np
 import os
 
+import pdb
+
 CUR_DIR = os.getcwd()
 
 X_INDEX = 1
@@ -89,10 +91,43 @@ class Model:
         model.compile(optimizer='adam', loss=loss_fn, metrics=['accuracy'])
         return model
 
+# DataBin class used to retrieve and return data
+class DataBin:
+    def __init__(self, x=None, y=None):
+        # Validate that the data lengths match
+        try:
+            assert len(x) == len(y)
+        except Exception as e:
+            print("Mismatching data lengths. " + str(e))
+        # Build a list of entries (x, y)
+        self.data = []
+        for i in range(len(x)):
+            self.data.append(x[i], y[i])
+        self.data_size = len(self.data)
+    # Get information about what information is available
+    def getSize(self):
+        return(self.data_size)
+    # Retrieve data from bin
+    def retrieve(self, number):
+        try:
+            assert number <= self.data_size
+        except:
+            print("Requested entries exceed maximum amount. Data left: " + str(self.getSize()))
+        retrieved = [self.data.pop(i) for i in range(number)]
+        x = [r[0] for r in retrieved]
+        y = [r[1] for r in retrieved]
+        # Update bin data size
+        self.data_size = len(self.data)
+        # Package (data size, x features, y labels) and return
+        return (number, x, y)
+        
+
 class ModelIncubator:
     def __init__(self, data_ratios):
+        # Load dataset into global training and testing sets
         self.x_train, self.x_test, self.y_train, self.y_test = self.get_dataset()
-        self.data_shares = self.rsplit(self.x_train, self.y_train, nonIID=True, ratios=data_ratios)
+        # Split into specific sets
+        # self.data_shares = self.rsplit(self.x_train, self.y_train, nonIID=True, ratios=data_ratios)
         self.test_data = (len(self.x_test), self.x_test, self.y_test)
         print("Model incubator has been generated.")
         
