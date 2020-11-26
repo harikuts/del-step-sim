@@ -27,6 +27,7 @@ class Console:
         self.cmd_queue = []
         # Init groups and command list
         self.groups = {}
+        self.group_data = {}
         self.group_commands = {'list', 'roster', 'create', 'membership'}
         self.automatic_net_flag = False
         # Init log
@@ -277,6 +278,10 @@ class Console:
             raise CommandError("Group name not valid. Current groups: " + str(self.groups.keys()))
     def update_group_connections(self):
         pass
+    # Updates group data consisting of all data from every node currently in the group
+    def update_group_data(self):
+        self.group_data = None
+        
     # LOG COMMANDS
     def next_cycle(self):
         self.log.new_step()
