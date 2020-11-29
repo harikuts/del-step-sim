@@ -120,8 +120,26 @@ class DataBin:
         self.data_size = len(self.data)
         # Package (data size, x features, y labels) and return
         return (number, x, y)
-        
 
+# Data Incubator for handling data retrieval and storage
+class DataIncubator:
+    def __init__(self):
+        self.data_shares = {}
+        self.test_shares = {}
+        self.group_shares = {}
+        pass
+    # Creates DataBin out of method get_dataset() and stores it into data_shares with name
+    def createDataBin(self, name, get_dataset):
+        # Extract from dataset method
+        x_train, x_test, y_train, y_test = get_dataset()
+        # Create databin and store it
+        databin = DataBin(x_train, y_train)
+        self.data_shares[name] = databin
+        # Store test data too
+        self.test_shares[name] = (x_test, y_test)
+
+
+# NOT FUNCTIONAL AT THE MOMENT
 class ModelIncubator:
     def __init__(self, data_ratios):
         # Load dataset into global training and testing sets
