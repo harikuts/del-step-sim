@@ -28,6 +28,7 @@ class Model:
         self.test_data=test_data
         
     def step(self):
+        # pdb.set_trace()
         history = self.model.fit(self.data[X_INDEX], self.data[Y_INDEX], epochs=NUM_EPOCHS)
         self.sharing_model = (self.data[D_SIZE_INDEX], self.model.get_weights())
 
@@ -102,7 +103,7 @@ class DataBin:
         # Build a list of entries (x, y)
         self.data = []
         for i in range(len(x)):
-            self.data.append(x[i], y[i])
+            self.data.append((x[i], y[i]))
         self.data_size = len(self.data)
     # Get information about what information is available
     def getSize(self):
@@ -116,6 +117,9 @@ class DataBin:
         retrieved = [self.data.pop(i) for i in range(number)]
         x = [r[0] for r in retrieved]
         y = [r[1] for r in retrieved]
+        # Change them from list to numpy array
+        x = np.stack(x, axis=0)
+        y = np.stack(y, axis=0)
         # Update bin data size
         self.data_size = len(self.data)
         # Package (data size, x features, y labels) and return
@@ -136,7 +140,35 @@ class DataIncubator:
         databin = DataBin(x_train, y_train)
         self.data_shares[name] = databin
         # Store test data too
-        self.test_shares[name] = (x_test, y_test)
+        assert len(x_test) == len(y_test)
+        self.test_shares[name] = (len(x_test), x_test, y_test)
+    # Retrieves from specified databin
+    def retrieve(self, name, num_entries):
+        # Call retrieve method from databin
+        return self.data_shares[name].retrieve(num_entries)
+
+    # DEFINE DATASET FUNCTIONS HERE (must return x_train, x_test, y_train, y_test)
+    # MNIST Dataset
+    def get_mnist(self):
+        # Import MNIST data
+        print ("\nUnpacking MNIST data...")
+#         mnist = tf.keras.datasets.mnist
+        # Load data into trains
+#         (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data(path=CUR_DIR+'/mnist.npz')
+        path = CUR_DIR + '/mnist.npz'
+        print ("Path: ", path)
+        with np.load(path) as data:
+            print("Setting x_train...")
+            x_train = data['x_train']
+            print("\ty_train...")
+            y_train = data['y_train']
+            print("\tx_test...")
+            x_test = data['x_test']
+            print("\ty_test...")
+            y_test = data['y_test']
+        print ("Unpacked data!")
+        x_train, x_test = x_train / 255.0, x_test / 255.0
+        return x_train, x_test, y_train, y_test
 
 
 # NOT FUNCTIONAL AT THE MOMENT
@@ -145,7 +177,7 @@ class ModelIncubator:
         # Load dataset into global training and testing sets
         self.x_train, self.x_test, self.y_train, self.y_test = self.get_dataset()
         # Split into specific sets
-        # self.data_shares = self.rsplit(self.x_train, self.y_train, nonIID=True, ratios=data_ratios)
+        self.data_shares = self.rsplit(self.x_train, self.y_train, nonIID=True, ratios=data_ratios)
         self.test_data = (len(self.x_test), self.x_test, self.y_test)
         print("Model incubator has been generated.")
         
@@ -157,9 +189,9 @@ class ModelIncubator:
     def get_mnist(self):
         # Import MNIST data
         print ("\nUnpacking MNIST data...")
-#         mnist = tf.keras.datasets.mnist
+        # mnist = tf.keras.datasets.mnist
         # Load data into trains
-#         (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data(path=CUR_DIR+'/mnist.npz')
+        # (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data(path=CUR_DIR+'/mnist.npz')
         path = CUR_DIR + '/mnist.npz'
         print ("Path: ", path)
         with np.load(path) as data:
@@ -255,7 +287,14 @@ class BookModelIncubator:
             data_size = len(x_data)
             dataSplits.append((data_size, x_data, y_data))
         return dataSplits
+
+# If called as main run test scripts
+if __name__ == "__main__":
+    DI = DataIncubator()
+    DI.createDataBin("MNIST", DI.get_mnist)
+    data = DI.retrieve("MNIST", 5000)
+    test_data = DI.test_shares["MNIST"]
+    modelA = Model(data, test_data=test_data)
+    modelA.step()
+    modelA.test()
     
-# mi = ModelIncubator([0.5, 0.25, 0.25])
-# m = Model(mi.data_shares[0])
-# m.step()
