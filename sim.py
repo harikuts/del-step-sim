@@ -89,8 +89,18 @@ class Console:
                 elif cmd[0] == "test":
                     if len(cmd) == 1:
                         self.test_all()
+                    elif cmd[1] in self.clients.keys():
+                        if len(cmd) == 2:
+                            self.test(cmd[1])
+                        elif cmd[2] == "group":
+                            if len(cmd) == 3:
+                                self.test_within_group(cmd[1], cmd[3])
+                            else:
+                                raise CommandError("Group name is required for testing within a group.")
+                        else:
+                            raise CommandError("Not a valid test command for %s." % (cmd[1]))
                     else:
-                        self.test(cmd[1])
+                        raise CommandError("Not a valid test command.")
                 # Group commands
                 elif cmd[0] == "group":
                     # List all groups
@@ -217,6 +227,11 @@ class Console:
     def test_all(self):
         for address in list(self.clients.keys()):
             self.test(address)
+    def test_within_group(self, addr, groupname):
+        if groupname in self.groups.keys():
+            group_data = DI.getGroupData(groupname)
+        else:
+            raise CommandError("Group name not valid. Current groups: " + str(self.groups.keys()))
     # GROUP COMMANDS
     def get_group_roster(self, groupname):
         if groupname in self.groups.keys():
@@ -277,11 +292,6 @@ class Console:
             self.tstep(subset=self.groups[groupname])
         else:
             raise CommandError("Group name not valid. Current groups: " + str(self.groups.keys()))
-    def update_group_connections(self):
-        pass
-    # Updates group data consisting of all data from every node currently in the group
-    def update_group_data(self):
-        self.group_data = None
         
     # LOG COMMANDS
     def next_cycle(self):
@@ -291,66 +301,70 @@ class Console:
     def log_results(self):
         self.log.printResults()
 
-import time
-from datetime import datetime
-from dummy_net import build_fully_connected_graph
+# MAIN
 
-# Create a graph
-graph = {}
+if __name__ == "__main__":
 
-nodes = ["10.0.0.%d" % (i+1) for i in range(12)]
-# nodes = ["10.0.0.1", "10.0.0.2", "10.0.0.3", "10.0.0.4", "10.0.0.5"]
-for node in nodes:
-    graph[node] = []
-graph = build_fully_connected_graph(graph)
+    import time
+    from datetime import datetime
+    from dummy_net import build_fully_connected_graph
+
+    # Create a graph
+    graph = {}
+
+    nodes = ["10.0.0.%d" % (i+1) for i in range(12)]
+    # nodes = ["10.0.0.1", "10.0.0.2", "10.0.0.3", "10.0.0.4", "10.0.0.5"]
+    for node in nodes:
+        graph[node] = []
+    graph = build_fully_connected_graph(graph)
 
 
 
-print("Created network graph.")
+    print("Created network graph.")
 
-# Create nodes for the virtual network
-ipRegistry = {}
-for addr in graph.keys():
-    newNode = DummyNet(addr, graph[addr])
-    ipRegistry[addr] = newNode
-# Build network (decentralized)
-for addr in graph.keys():
-    ipRegistry[addr].init_network(ipRegistry)
-print("Registered nodes in network graph.")
+    # Create nodes for the virtual network
+    ipRegistry = {}
+    for addr in graph.keys():
+        newNode = DummyNet(addr, graph[addr])
+        ipRegistry[addr] = newNode
+    # Build network (decentralized)
+    for addr in graph.keys():
+        ipRegistry[addr].init_network(ipRegistry)
+    print("Registered nodes in network graph.")
 
-# Create Incubator with and load data
-# MI = ModelIncubator([0.83, 0.83, 0.83, 0.83, 0.2])
-DI = DataIncubator()
-DI.createDataBin("MNIST", DI.get_mnist)
+    # Create Incubator with and load data
+    # MI = ModelIncubator([0.83, 0.83, 0.83, 0.83, 0.2])
+    DI = DataIncubator()
+    DI.createDataBin("MNIST", DI.get_mnist)
 
-# Create clients
-clientDict = {}
-ind = 0
-for ip in ipRegistry.keys():
-    print("Creating client ", ind, " with IP ", ip, ".")
-    clientDict[ip] = Client(netNode=ipRegistry[ip], model=Model())
-    clientDict[ip].model.setData(DI.retrieve("MNIST", 5000))
-    clientDict[ip].model.setTestData(DI.test_shares["MNIST"])
-    ind += 1
-print("Clients created and linked to nodes.")
+    # Create clients
+    clientDict = {}
+    ind = 0
+    for ip in ipRegistry.keys():
+        print("Creating client ", ind, " with IP ", ip, ".")
+        clientDict[ip] = Client(netNode=ipRegistry[ip], model=Model())
+        clientDict[ip].model.setData(DI.retrieve("MNIST", 5000, ip))
+        clientDict[ip].model.setTestData(DI.test_shares["MNIST"])
+        ind += 1
+    print("Clients created and linked to nodes.")
 
-# Retrieve data for clients.
+    # Retrieve data for clients.
 
-# clientDict["10.0.0.1"].transmit(str(time.time()), "10.0.0.2")
-# time.sleep(2.5)
-# clientDict["10.0.0.2"].transmit(str(time.time()), "10.0.0.3")
-# time.sleep(2.5)
+    # clientDict["10.0.0.1"].transmit(str(time.time()), "10.0.0.2")
+    # time.sleep(2.5)
+    # clientDict["10.0.0.2"].transmit(str(time.time()), "10.0.0.3")
+    # time.sleep(2.5)
 
-# print("Begin experiment.")
-# for i in range(10):
-#     secrets.choice(list(clientDict.values())).transmit_model()
-#     time.sleep(1)
+    # print("Begin experiment.")
+    # for i in range(10):
+    #     secrets.choice(list(clientDict.values())).transmit_model()
+    #     time.sleep(1)
 
-# Start execution
-console = Console(clientDict)
-console.run()
+    # Start execution
+    console = Console(clientDict)
+    console.run()
 
-print("Ending experiment.")
-# Kill all nodes
-for addr in graph.keys():
-    ipRegistry[addr].kill()
+    print("Ending experiment.")
+    # Kill all nodes
+    for addr in graph.keys():
+        ipRegistry[addr].kill()

@@ -153,6 +153,7 @@ class DataIncubator:
         self.test_shares = {}
         self.group_shares = {}
         self.leases = {}
+        self.global_data = None
         pass
     # Creates DataBin out of method get_dataset() and stores it into data_shares with name
     def createDataBin(self, name, get_dataset):
@@ -165,11 +166,45 @@ class DataIncubator:
         assert len(x_test) == len(y_test)
         self.test_shares[name] = (len(x_test), x_test, y_test)
     # Retrieves from specified databin
-    def retrieve(self, name, num_entries):
-        # Call retrieve method from databin
+    def retrieve(self, name, num_entries, client_name=None):
+        # Check for client name (this will be required in the future)
+        if client_name is not None:
+            # Call retrieve method from databin
+            self.leases[client_name] = self.data_shares[name].retrieve(num_entries)
+            return self.leases[client_name]
+        # Legacy in case client name isn't specified
+        else:
+            return self.data_shares[name].retrieve(num_entries)
+    # Assembles group data based on list of nodes provided matched to names on the leases
+    def AssembleData(self, nodelist):
+        nodelist = list(nodelist)
+        # Function to combine leased datasets
+        def combine(data1, data2):
+            data_size = data1[D_SIZE_INDEX] + data2[D_SIZE_INDEX]
+            print(data1[X_INDEX].shape, data2[X_INDEX].shape)
+            x = np.concatenate((data1[X_INDEX], data2[X_INDEX]))
+            print(x.shape)
+            y = np.concatenate((data1[Y_INDEX], data2[Y_INDEX]))
+            return (data_size, x, y)
+        # Start with the first value
+        if nodelist[0] in self.leases.keys():
+            combined_data = self.leases[nodelist[0]]
+        else:
+            raise DataError("DI lease name %s not valid. Currently on lease: %s" \
+                % (nodelist[0], str(list(self.leases.keys()))))
+        # Continue with rest of the list
+        for i in range(1, len(nodelist)):
+            if nodelist[i] in self.leases.keys():
+                combined_data = combine(combined_data, self.leases[nodelist[i]])
+            else:
+                raise DataError("DI lease name %s not valid. Currently on lease: %s" \
+                    % (nodelist[i], str(list(self.leases.keys()))))
+        return combined_data
 
-        return self.data_shares[name].retrieve(num_entries)
-
+    # Set global data out of all currently leased data, should be called after data is leased
+    def setGlobalData(self):
+        self.global_data = self.AssembleData(self.leases.keys())
+        
     # DEFINE DATASET FUNCTIONS HERE (must return x_train, x_test, y_train, y_test)
     # MNIST Dataset
     def get_mnist(self):
@@ -316,9 +351,23 @@ if __name__ == "__main__":
     DI = DataIncubator()
     DI.createDataBin("MNIST", DI.get_mnist)
     print(DI.data_shares["MNIST"].getSize())
-    data = DI.retrieve("MNIST", 5000)
+    # Test Model A
+    data = DI.retrieve("MNIST", 5000, "Model A")
     test_data = DI.test_shares["MNIST"]
     modelA = Model(data, test_data=test_data)
     modelA.step()
     modelA.test()
+    print("Model A passed!")
+    # Test Model B
+    data = DI.retrieve("MNIST", 3000, "Model B")
+    test_data = DI.test_shares["MNIST"]
+    modelB = Model(data, test_data=test_data)
+    modelB.step()
+    modelB.test()
+    print("Model B passed!")
+    # Test global data
+    DI.setGlobalData()
+    print(DI.global_data[0])
+    assert DI.global_data[0] == 8000
+    print("Global/Assembly passed!")
     
