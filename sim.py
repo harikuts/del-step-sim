@@ -5,6 +5,7 @@ from dummy_net import Packet
 
 from learning_module import ModelIncubator
 from learning_module import Model
+from learning_module import DataIncubator
 
 from client import Client
 
@@ -292,20 +293,18 @@ class Console:
 
 import time
 from datetime import datetime
+from dummy_net import build_fully_connected_graph
 
 # Create a graph
 graph = {}
-# graph["10.0.0.1"] = ["10.0.0.2", "10.0.0.3"]
-# graph["10.0.0.2"] = ["10.0.0.1", "10.0.0.3"]
-# graph["10.0.0.3"] = ["10.0.0.1", "10.0.0.2"]
-# graph["10.0.0.4"] = ["10.0.0.1", "10.0.0.3"]
 
-from dummy_net import build_fully_connected_graph
-
-nodes = ["10.0.0.1", "10.0.0.2", "10.0.0.3", "10.0.0.4", "10.0.0.5"]
+nodes = ["10.0.0.%d" % (i+1) for i in range(12)]
+# nodes = ["10.0.0.1", "10.0.0.2", "10.0.0.3", "10.0.0.4", "10.0.0.5"]
 for node in nodes:
     graph[node] = []
 graph = build_fully_connected_graph(graph)
+
+
 
 print("Created network graph.")
 
@@ -319,17 +318,22 @@ for addr in graph.keys():
     ipRegistry[addr].init_network(ipRegistry)
 print("Registered nodes in network graph.")
 
-# Create Incubator with data ratios
-MI = ModelIncubator([0.2, 0.1, 0.2, 0.3, 0.2])
+# Create Incubator with and load data
+# MI = ModelIncubator([0.83, 0.83, 0.83, 0.83, 0.2])
+DI = DataIncubator()
+DI.createDataBin("MNIST", DI.get_mnist)
 
 # Create clients
 clientDict = {}
 ind = 0
 for ip in ipRegistry.keys():
     print("Creating client ", ind, " with IP ", ip, ".")
-    clientDict[ip] = Client(netNode=ipRegistry[ip], model=Model(data=MI.data_shares[ind], test_data=MI.test_data))
+    clientDict[ip] = Client(netNode=ipRegistry[ip], model=Model())
+    clientDict[ip].model.setData(DI.retrieve("MNIST", 5000))
     ind += 1
 print("Clients created and linked to nodes.")
+
+# Retrieve data for clients.
 
 # clientDict["10.0.0.1"].transmit(str(time.time()), "10.0.0.2")
 # time.sleep(2.5)

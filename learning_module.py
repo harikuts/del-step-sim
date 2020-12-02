@@ -133,7 +133,7 @@ class DataBin:
             assert number <= self.data_size
         except:
             print("Requested entries exceed maximum amount. Data left: " + str(self.getSize()))
-        retrieved = [self.data.pop(i) for i in range(number)]
+        retrieved = [self.data.pop(0) for i in range(number)]
         x = [r[0] for r in retrieved]
         y = [r[1] for r in retrieved]
         # Change them from list to numpy array
@@ -141,6 +141,8 @@ class DataBin:
         y = np.stack(y, axis=0)
         # Update bin data size
         self.data_size = len(self.data)
+        # Report back for diagnostics
+        print("Retrieved %d entries, %d are left." % (number, self.getSize()))
         # Package (data size, x features, y labels) and return
         return (number, x, y)
 
@@ -165,7 +167,7 @@ class DataIncubator:
     # Retrieves from specified databin
     def retrieve(self, name, num_entries):
         # Call retrieve method from databin
-        
+
         return self.data_shares[name].retrieve(num_entries)
 
     # DEFINE DATASET FUNCTIONS HERE (must return x_train, x_test, y_train, y_test)
@@ -313,6 +315,7 @@ class BookModelIncubator:
 if __name__ == "__main__":
     DI = DataIncubator()
     DI.createDataBin("MNIST", DI.get_mnist)
+    print(DI.data_shares["MNIST"].getSize())
     data = DI.retrieve("MNIST", 5000)
     test_data = DI.test_shares["MNIST"]
     modelA = Model(data, test_data=test_data)
