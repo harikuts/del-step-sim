@@ -17,25 +17,44 @@ D_SIZE_INDEX = 0
 
 NUM_EPOCHS = 2
 
+class DataError(BaseException):
+    def __init__(self, error_message=None):
+        self.error_message = error_message
+    def __str__(self):
+        return("DataError: " + self.error_message)
+
 class Model:
     
-    def __init__(self, data, test_data=None):
+    def __init__(self, data=None, test_data=None):
         self.data = data
         self.model = self.create_model()
         self.sharing_model = None
         self.communal_learning_rate = 1.0
 
         self.test_data=test_data
+
+    # Set data
+    def setData(self, data):
+        self.data = data
+
+    # Set test data
+    def setTestData(self, test_data):
+        self.test_data = test_data
         
+    # Takes a training step (should be called train)
     def step(self):
-        # pdb.set_trace()
-        history = self.model.fit(self.data[X_INDEX], self.data[Y_INDEX], epochs=NUM_EPOCHS)
-        self.sharing_model = (self.data[D_SIZE_INDEX], self.model.get_weights())
+        if self.data is not None:
+            history = self.model.fit(self.data[X_INDEX], self.data[Y_INDEX], epochs=NUM_EPOCHS)
+            self.sharing_model = (self.data[D_SIZE_INDEX], self.model.get_weights())
+        else:
+            raise DataError("Cannot train model. No data exists.")
 
     def test(self):
         if self.test_data is not None:
             loss, acc = self.model.evaluate(self.test_data[X_INDEX], self.test_data[Y_INDEX], verbose=1)
             return loss, acc
+        else:
+            raise DataError("Cannot test model. No training data exists.")
         
     # List of tuples of [data size, weights] from other nodes
     def aggregate(self, recv_list):
@@ -131,6 +150,7 @@ class DataIncubator:
         self.data_shares = {}
         self.test_shares = {}
         self.group_shares = {}
+        self.leases = {}
         pass
     # Creates DataBin out of method get_dataset() and stores it into data_shares with name
     def createDataBin(self, name, get_dataset):
@@ -145,6 +165,7 @@ class DataIncubator:
     # Retrieves from specified databin
     def retrieve(self, name, num_entries):
         # Call retrieve method from databin
+        
         return self.data_shares[name].retrieve(num_entries)
 
     # DEFINE DATASET FUNCTIONS HERE (must return x_train, x_test, y_train, y_test)
