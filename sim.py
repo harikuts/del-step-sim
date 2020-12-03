@@ -28,7 +28,6 @@ class Console:
         self.cmd_queue = []
         # Init groups and command list
         self.groups = {}
-        self.group_data = {}
         self.group_commands = {'list', 'roster', 'create', 'membership'}
         self.automatic_net_flag = False
         # Init log
@@ -93,7 +92,7 @@ class Console:
                         if len(cmd) == 2:
                             self.test(cmd[1])
                         elif cmd[2] == "group":
-                            if len(cmd) == 3:
+                            if len(cmd) == 4:
                                 self.test_within_group(cmd[1], cmd[3])
                             else:
                                 raise CommandError("Group name is required for testing within a group.")
@@ -115,9 +114,6 @@ class Console:
                     # Create new group
                     elif cmd[1] == "create":
                         self.groups[cmd[2]] = []
-                    # Update network graph connections
-                    elif cmd[1] == "connect":
-                        self.update_group_connections()
                     # GROUP LEVEL COMMANDS
                     # Add member to a group
                     elif cmd[1] in self.groups:
@@ -228,8 +224,9 @@ class Console:
         for address in list(self.clients.keys()):
             self.test(address)
     def test_within_group(self, addr, groupname):
-        if groupname in self.groups.keys():
-            group_data = DI.getGroupData(groupname)
+        if groupname in self.groups.keys() and addr in self.clients.keys():
+            group_data = DI.AssembleData(self.groups[groupname])
+            self.clients[addr].model.test(data=group_data)
         else:
             raise CommandError("Group name not valid. Current groups: " + str(self.groups.keys()))
     # GROUP COMMANDS

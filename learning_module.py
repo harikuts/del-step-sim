@@ -48,13 +48,14 @@ class Model:
             self.sharing_model = (self.data[D_SIZE_INDEX], self.model.get_weights())
         else:
             raise DataError("Cannot train model. No data exists.")
-
-    def test(self):
-        if self.test_data is not None:
-            loss, acc = self.model.evaluate(self.test_data[X_INDEX], self.test_data[Y_INDEX], verbose=1)
+    # Test function, calls evaluate on passed in data; default data is loaded in test data
+    def test(self, data=None):
+        data = self.test_data if data is None else data
+        if data is not None:
+            loss, acc = self.model.evaluate(data[X_INDEX], data[Y_INDEX], verbose=1)
             return loss, acc
         else:
-            raise DataError("Cannot test model. No training data exists.")
+            raise DataError("Cannot test model. No testing data exists.")
         
     # List of tuples of [data size, weights] from other nodes
     def aggregate(self, recv_list):
