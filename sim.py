@@ -69,13 +69,22 @@ class Console:
                 # Switch for auto net processes after each command
                 elif cmd[0] == "autonet":
                     switch_autonet = self.toggle_autonet()
+                # Train
                 elif cmd[0] == "train":
                     if len(cmd) == 1:
                         self.tstep()
                     else:
                         self.itstep(cmd[1])
+                # Aggregate
+                elif cmd[0] == "ag":
+                    if cmd[1] == "full":
+                        self.aggregate_all(cmd[2])
+                    else:
+                        self.aggregate(cmd[1])
+                # View all nodes
                 elif cmd[0] == "neighborhood":
                     print (self.get_all_addrs())
+                # Share between two nodes
                 elif cmd[0] == "exchange":
                     self.exchange(cmd[1], cmd[2])
                 elif cmd[0] == "flood":
@@ -130,6 +139,8 @@ class Console:
                         elif cmd[2] == "train":
                             self.group_train(groupname)
                         # Aggregate within a group
+                        # elif cmd[2] == "ag":
+                        #     self.group_aggregate(groupname)
                         # Report error
                         else:
                             raise CommandError("Not a valid group-specific command.")
@@ -191,11 +202,13 @@ class Console:
         will_toggle = not self.automatic_net_flag
         print ("Automatic network processes", ("enabled" if will_toggle else "disabled"))
         return will_toggle
+    # Training step
     def tstep(self, subset=None):
         nodeset = self.clients.keys() if subset is None else subset
         selected_clients = [self.clients[addr] for addr in nodeset]
         for client in selected_clients:
             client.train_model()
+    # Every node floods every other node, please don't ever use this, it's not good
     def floodall(self):
         for client in self.clients.values():
             for neighbor in client.net.neighbors.keys():
@@ -229,6 +242,10 @@ class Console:
             self.clients[addr].model.test(data=group_data)
         else:
             raise CommandError("Group name not valid. Current groups: " + str(self.groups.keys()))
+    def aggregate(self, ip):
+        self.clients[ip].aggregate()
+    def aggregate_all(self, ip):
+        self.clients[ip].aggregate_all()
     # GROUP COMMANDS
     def get_group_roster(self, groupname):
         if groupname in self.groups.keys():
@@ -285,6 +302,11 @@ class Console:
         else:
             raise CommandError("Group name not valid. Current groups: " + str(self.groups.keys()))
     def group_train(self, groupname):
+        if groupname in self.groups.keys():
+            self.tstep(subset=self.groups[groupname])
+        else:
+            raise CommandError("Group name not valid. Current groups: " + str(self.groups.keys()))
+    def group_aggregate(self, groupname):
         if groupname in self.groups.keys():
             self.tstep(subset=self.groups[groupname])
         else:

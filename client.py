@@ -3,7 +3,7 @@
 import secrets
 from dummy_net import DummyNet
 
-EXPIRY = 10
+EXPIRY = 0
 
 # A single record.
 class Record:
@@ -75,13 +75,32 @@ class Client:
             output = output + "Message not printable."
         print(output)
         
-    # Main run process as a state machine.
+    # Main run process as a state machine. Combined aggregate and train step (shouldn't necessarily be used).
     def process(self):
         recvd = self.recv_aggregate_model()
         if not recvd:
             self.train_model()  
         # Step the guest book
         self.guest_book.step()
+
+    # Single aggregation step
+    def aggregate(self):
+        recvd = self.recv_aggregate_model()
+        if not recvd:
+            self.print_("Nothing to be aggregated.")
+        self.guest_book.step()
+
+    # Aggregates all models that need to be aggregated, enabling serial makes it such that each single aggregation is a step
+    def aggregate_all(self, serial=False):
+        recvd = True
+        while recvd:
+            recvd = self.recv_aggregate_model()
+            if recvd and serial:
+                self.guest_book.step()
+            else:
+                self.print_("No more received models to be aggregated.")
+        if not serial:
+            self.guest_book.step()
 
     def recv_aggregate_model(self):
         # Check inbox
