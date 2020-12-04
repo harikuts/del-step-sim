@@ -6,7 +6,8 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import tensorflow as tf
 import numpy as np
 import os
-
+import random
+import statistics
 import pdb
 
 CUR_DIR = os.getcwd()
@@ -114,7 +115,7 @@ class Model:
 
 # DataBin class used to retrieve and return data
 class DataBin:
-    def __init__(self, x=None, y=None):
+    def __init__(self, x, y):
         # Validate that the data lengths match
         try:
             assert len(x) == len(y)
@@ -125,6 +126,9 @@ class DataBin:
         for i in range(len(x)):
             self.data.append((x[i], y[i]))
         self.data_size = len(self.data)
+        # Weighted shuffle the data
+        self.weightedShuffle()
+        self.verifyDistribution()
     # Get information about what information is available
     def getSize(self):
         return(self.data_size)
@@ -146,6 +150,48 @@ class DataBin:
         print("Retrieved %d entries, %d are left." % (number, self.getSize()))
         # Package (data size, x features, y labels) and return
         return (number, x, y)
+    # Weighted shuffle
+    def weightedShuffle(self, weight=0.5):
+        # Shuffle the dataset pre-emptively
+        random.shuffle(self.data)
+        # Get the piles to be sorted and unsorted
+        div = int(float(weight) * self.data_size)
+        sorted_pile = self.data[:div]
+        shuffled_pile = self.data[div:]
+        # Sort the sorted pile
+        def sorting_function(e):
+            # Sort by y-value
+            return e[1]
+        sorted_pile.sort(key=sorting_function)
+        # Shuffle the other pile
+        random.shuffle(shuffled_pile)
+        # Probabilistically reassemble the data
+        data = []
+        # While both piles have stuff in them
+        while len(sorted_pile) > 0 and len(shuffled_pile) > 0:
+            if random.random() < weight:
+                data.append(sorted_pile.pop(0))
+            else:
+                data.append(shuffled_pile.pop(0))
+        # Add the remaining of either list and done
+        data = data + sorted_pile + shuffled_pile
+        assert len(data) == self.data_size
+        self.data = data
+    def verifyDistribution(self, resolution=0.1):
+        labels = [e[1] for e in self.data]
+        ind = 0
+        resolution = int(resolution * len(labels))
+        print("Verifying distribution...")
+        while ind < len(labels):
+            sample = labels[ind:(ind+resolution)]
+            mode = statistics.mode(sample)
+            mean = statistics.mean(sample)
+            print("\t%d%% - %d%% : MEAN - %d : MODE - %d" % (
+                ind*100/len(labels), (ind+resolution)*100/len(labels), mean, mode
+            ))
+            ind = ind + resolution
+
+
 
 # Data Incubator for handling data retrieval and storage
 class DataIncubator:
