@@ -30,8 +30,8 @@ class Log:
         else:
             raise LogError
     # Result entries don't need a add and commit, they are just directly added
-    def commitResult(self, node, results):
-        newResult = ResultEntry(self.current_cycle(), node, results)
+    def commitResult(self, node, scope, results):
+        newResult = ResultEntry(self.current_cycle(), node, scope, results)
         self.cycles[self.current_cycle()].append(newResult)
     # New step advances the simulation (for the sake of records)
     def new_step(self):
@@ -108,15 +108,16 @@ class CommandEntry(Entry):
         return("%d\tCOMMAND\t%s\t[%s]" % (self.cycle, ("OK" if self.success else "ER"), self.commandString))
 
 class ResultEntry(Entry):
-    def __init__(self, cur_cycle, node, value_list):
+    def __init__(self, cur_cycle, node, scope, value_list):
         super().__init__(cur_cycle)
         self.node = node
+        self.scope = scope
         self.values = value_list
         self.str_values = [str(value) for value in value_list]
     def get_entry(self):
-        return("%d,RESULT,%s,%s" % (self.cycle, self.node, ','.join(self.str_values)))
+        return("%d,RESULT,%s,%s,%s" % (self.cycle, self.node, self.scope, ','.join(self.str_values)))
     def __str__(self):
-        return("%d\tRESULT\t%s\t%s" % (self.cycle, self.node, '\t'.join(self.str_values)))
+        return("%d\tRESULT\t%s\t%s\t%s" % (self.cycle, self.node, self.scope, '\t'.join(self.str_values)))
 
 # Test the logger
 if __name__ == "__main__":

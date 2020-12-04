@@ -30,7 +30,7 @@ class Model:
         self.data = data
         self.model = self.create_model()
         self.sharing_model = None
-        self.communal_learning_rate = 1.0
+        self.communal_learning_rate = 0.5
 
         self.test_data=test_data
 

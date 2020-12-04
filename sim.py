@@ -77,10 +77,10 @@ class Console:
                         self.itstep(cmd[1])
                 # Aggregate
                 elif cmd[0] == "ag":
-                    if cmd[1] == "full":
-                        self.aggregate_all(cmd[2])
+                    if len(cmd) == 1:
+                        self.aggregate_all()
                     else:
-                        self.aggregate(cmd[1])
+                        self.aggregate_full(cmd[1])
                 # View all nodes
                 elif cmd[0] == "neighborhood":
                     print (self.get_all_addrs())
@@ -105,6 +105,10 @@ class Console:
                                 self.test_within_group(cmd[1], cmd[3])
                             else:
                                 raise CommandError("Group name is required for testing within a group.")
+                        elif cmd[2] == "local":
+                            self.test_local(cmd[1])
+                        elif cmd[2] == "global":
+                            self.test_global(cmd[1])
                         else:
                             raise CommandError("Not a valid test command for %s." % (cmd[1]))
                     else:
@@ -183,7 +187,13 @@ class Console:
     def load_script(self, filename):
         try:
             with open(filename, "r") as f:
-                self.cmd_queue = self.cmd_queue + f.readlines()
+                lines = f.readlines()
+                # Remove comments, only store commands
+                commands = []
+                for line in lines:
+                    if line[0] != '#':
+                        commands.append(line)
+                self.cmd_queue = self.cmd_queue + commands
         except:
             raise CommandError("Failed to load file: " + filename)
     # SYSTEM LEVEL COMMANDS
@@ -231,21 +241,36 @@ class Console:
         print(self.clients[ip].guest_book)
     def test(self, ip):
         results = self.clients[ip].model.test()
-        print("LOSS:", results[0], "ACCURACY:", results[1])
-        self.log.commitResult(ip, results)
+        print("GENERAL RESULT - LOSS:", results[0], "ACCURACY:", results[1])
+        self.log.commitResult(ip, "general", results)
     def test_all(self):
         for address in list(self.clients.keys()):
             self.test(address)
+    def test_local(self, ip):
+        local_data = self.clients[ip].model.data
+        results = self.clients[ip].model.test(data=local_data)
+        print("LOCAL RESULT - LOSS:", results[0], "ACCURACY:", results[1])
+        self.log.commitResult(ip, "local", results)
     def test_within_group(self, addr, groupname):
         if groupname in self.groups.keys() and addr in self.clients.keys():
             group_data = DI.AssembleData(self.groups[groupname])
-            self.clients[addr].model.test(data=group_data)
+            results = self.clients[addr].model.test(data=group_data)
+            print("GROUP RESULT - LOSS:", results[0], "ACCURACY:", results[1])
+            self.log.commitResult(ip, "group", results)
         else:
             raise CommandError("Group name not valid. Current groups: " + str(self.groups.keys()))
+    def test_global(self, ip):
+        global_data = DI.AssembleData(list(self.clients.keys()))
+        results = self.clients[ip].model.test(data=global_data)
+        print("LOCAL RESULT - LOSS:", results[0], "ACCURACY:", results[1])
+        self.log.commitResult(ip, "global", results)
     def aggregate(self, ip):
         self.clients[ip].aggregate()
-    def aggregate_all(self, ip):
-        self.clients[ip].aggregate_all()
+    def aggregate_all(self):
+        for address in list(self.clients.keys()):
+            self.aggregate_full(address)
+    def aggregate_full(self, ip):
+        self.clients[ip].aggregate_full()
     # GROUP COMMANDS
     def get_group_roster(self, groupname):
         if groupname in self.groups.keys():
@@ -309,7 +334,7 @@ class Console:
     def group_aggregate(self, groupname):
         if groupname in self.groups.keys():
             for ip in self.groups[groupname]:
-                self.clients[ip].aggregate_all()
+                self.clients[ip].aggregate_full()
         else:
             raise CommandError("Group name not valid. Current groups: " + str(self.groups.keys()))
         

@@ -91,7 +91,7 @@ class Client:
     #     self.guest_book.step()
 
     # # Aggregates all models that need to be aggregated, enabling serial makes it such that each single aggregation is a step
-    # def aggregate_all(self, serial=False):
+    # def aggregate_full(self, serial=False):
     #     recvd = True
     #     while recvd:
     #         recvd = self.recv_aggregate_model()
@@ -115,7 +115,7 @@ class Client:
             return False
         self.guest_book.step()
 
-    def aggregate_all(self, serial=False):
+    def aggregate_full(self, serial=False):
         # Check inbox
         packet = self.net.receive()
         while packet is not None:
