@@ -68,6 +68,14 @@ class Log:
         lines = [str(result) for result in results]
         corpus = '\n'.join(lines)
         print(corpus)
+    # Save results
+    def saveResults(self, filename):
+        results = self.getResults()
+        lines = [result.get_entry() for result in results]
+        lines = ["CYCLE,TYPE,NODE,SCOPE,LOSS,ACC",] + lines
+        corpus = '\n'.join(lines)
+        with open(filename, 'w') as f:
+            f.write(corpus)
 
 
 class Entry:

@@ -161,6 +161,9 @@ class Console:
                             self.log_results()
                         else:
                             raise CommandError("Log command invalid.")
+                elif cmd[0] == "save":
+                    if cmd[1] == "results":
+                        self.save_results(cmd[2])
                 else:
                     raise CommandError("Command does not exist.")
                 # Process network step if auto net
@@ -256,7 +259,7 @@ class Console:
             group_data = DI.AssembleData(self.groups[groupname])
             results = self.clients[addr].model.test(data=group_data)
             print("GROUP RESULT - LOSS:", results[0], "ACCURACY:", results[1])
-            self.log.commitResult(ip, "group", results)
+            self.log.commitResult(addr, "group", results)
         else:
             raise CommandError("Group name not valid. Current groups: " + str(self.groups.keys()))
     def test_global(self, ip):
@@ -345,6 +348,8 @@ class Console:
         self.log.printLog()
     def log_results(self):
         self.log.printResults()
+    def save_results(self, filename):
+        self.log.saveResults(filename)
 
 # MAIN
 
