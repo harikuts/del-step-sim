@@ -139,8 +139,8 @@ class Console:
                         elif cmd[2] == "train":
                             self.group_train(groupname)
                         # Aggregate within a group
-                        # elif cmd[2] == "ag":
-                        #     self.group_aggregate(groupname)
+                        elif cmd[2] == "ag":
+                            self.group_aggregate(groupname)
                         # Report error
                         else:
                             raise CommandError("Not a valid group-specific command.")
@@ -308,7 +308,8 @@ class Console:
             raise CommandError("Group name not valid. Current groups: " + str(self.groups.keys()))
     def group_aggregate(self, groupname):
         if groupname in self.groups.keys():
-            self.tstep(subset=self.groups[groupname])
+            for ip in self.groups[groupname]:
+                self.clients[ip].aggregate_all()
         else:
             raise CommandError("Group name not valid. Current groups: " + str(self.groups.keys()))
         

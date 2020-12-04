@@ -3,7 +3,7 @@
 import secrets
 from dummy_net import DummyNet
 
-EXPIRY = 0
+EXPIRY = 5
 
 # A single record.
 class Record:
@@ -83,39 +83,55 @@ class Client:
         # Step the guest book
         self.guest_book.step()
 
-    # Single aggregation step
+    # # Single aggregation step
+    # def aggregate(self):
+    #     recvd = self.recv_aggregate_model()
+    #     if not recvd:
+    #         self.print_("Nothing to be aggregated.")
+    #     self.guest_book.step()
+
+    # # Aggregates all models that need to be aggregated, enabling serial makes it such that each single aggregation is a step
+    # def aggregate_all(self, serial=False):
+    #     recvd = True
+    #     while recvd:
+    #         recvd = self.recv_aggregate_model()
+    #         if recvd and serial:
+    #             self.guest_book.step()
+    #     if not serial:
+    #         self.guest_book.step()
+
     def aggregate(self):
-        recvd = self.recv_aggregate_model()
-        if not recvd:
-            self.print_("Nothing to be aggregated.")
-        self.guest_book.step()
-
-    # Aggregates all models that need to be aggregated, enabling serial makes it such that each single aggregation is a step
-    def aggregate_all(self, serial=False):
-        recvd = True
-        while recvd:
-            recvd = self.recv_aggregate_model()
-            if recvd and serial:
-                self.guest_book.step()
-            else:
-                self.print_("No more received models to be aggregated.")
-        if not serial:
-            self.guest_book.step()
-
-    def recv_aggregate_model(self):
         # Check inbox
         packet = self.net.receive()
+        self.model_ready = False
         if packet is not None:
+            self.print_("Processing model from " + str(packet.src))
+            self.guest_book.encounter(packet.src, packet.data, EXPIRY)
+            # Get list of (size, model weights)
+            self.print_("Aggregating model with new input.")
+            size_weight_list = [(record.data_size, record.weights) for record in self.guest_book.records.values()]
+            self.model.aggregate(size_weight_list)
+        else:
+            return False
+        self.guest_book.step()
+
+    def aggregate_all(self, serial=False):
+        # Check inbox
+        packet = self.net.receive()
+        while packet is not None:
             self.model_ready = False
             self.print_("Processing model from " + str(packet.src))
             self.guest_book.encounter(packet.src, packet.data, EXPIRY)
-            self.print_("Aggregating model with new input.")
-            # Get list of (size, model weights)
-            size_weight_list = [(record.data_size, record.weights) for record in self.guest_book.records.values()]
-            self.model.aggregate(size_weight_list)
-            return True
-        else:
-            return False
+            if serial:
+                self.guest_book.step()
+            packet = self.net.receive()
+        if not serial:
+            self.guest_book.step()
+        # Get list of (size, model weights) then AGGREGATE
+        self.print_("Aggregating model with new input.")
+        size_weight_list = [(record.data_size, record.weights) for record in self.guest_book.records.values()]
+        self.model.aggregate(size_weight_list)
+        self.guest_book.step()
     
     def train_model(self):
         # Train the model on local data
@@ -123,12 +139,12 @@ class Client:
         self.model.step()
         self.model_ready = True          
     
-    # Aggregation function redirects to model-level aggregation.
-    def aggregate(self):
-        # Redirect to model-level aggregation
-        weight_list = [(rec.data_size, rec.weights) for rec in self.guest_book.records]
-        self.model.aggregate(weight_list)
-        # Update expiry table
+    # # Aggregation function redirects to model-level aggregation.
+    # def aggregate(self):
+    #     # Redirect to model-level aggregation
+    #     weight_list = [(rec.data_size, rec.weights) for rec in self.guest_book.records]
+    #     self.model.aggregate(weight_list)
+    #     # Update expiry table
 
     # Lowest level client transmission function.
     def transmit(self, payload, target_addr):
@@ -138,6 +154,8 @@ class Client:
     def transmit_model(self, recipient):
         # Select recipient
         # Transmit model to recipient
+        # for now always make model_ready True, do not require training after, user can manually do so if they'd like
+        self.model_ready = True
         if self.model_ready:
             self.transmit(self.model.sharing_model, recipient)
             self.print_("Transmitting model weights to " + recipient)
