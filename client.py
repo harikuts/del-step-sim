@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import secrets
+import random
 from dummy_net import DummyNet
 
 EXPIRY = 5
@@ -162,5 +163,5 @@ class Client:
         else:
             self.print_("Model still processing.")
     # Select random recipient.
-    def select_random_recv(self):
-        return secrets.choice(list(self.net.neighbors.keys()))
+    def select_random_recv(self, num):
+        return random.sample(list(self.net.neighbors.keys()), num)

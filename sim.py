@@ -12,6 +12,9 @@ from client import Client
 import logger
 
 import threading
+import random
+
+LINK_RELIABILITY = 0.5
 
 # Command Error (to be used within console)
 class CommandError(BaseException):
@@ -225,7 +228,14 @@ class Console:
     def floodall(self):
         for client in self.clients.values():
             for neighbor in client.net.neighbors.keys():
-                client.transmit_model(neighbor)
+                if random.random() < LINK_RELIABILITY:
+                    client.transmit_model(neighbor)
+    # Limited flood
+    def floodlim(self, ip, limit):
+        for i in range(limit):
+            neighbor = self.clients[ip].select_random_recv(limit)
+            self.clients[i].transmit_model(neighbor)
+
     # INTERNODE LEVEL COMMANDS
     def exchange(self, ip1, ip2):
         self.clients[ip1].transmit_model(ip2)
