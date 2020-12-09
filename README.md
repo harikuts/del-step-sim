@@ -1,4 +1,4 @@
-# DEL-Step: An Interactive Decentralized Learning Simulator
+# DEL-Sim: An Interactive Decentralized Learning Simulator
 
 A simple, easy-to-deploy, interactive, step-by-step simulator for decentralized learning, using Tensorflow. PyTorch integration planned for the future.
 
