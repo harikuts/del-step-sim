@@ -33,4 +33,5 @@ load group-cycle.txt
 load group-cycle.txt
 # Reporting
 log results
-save results prelims.csv
+save results group-only-run.csv
+exit
