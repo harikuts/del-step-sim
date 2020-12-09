@@ -183,7 +183,7 @@ class Console:
                 self.log.NewEntry.set_success(False)
             except Exception as e:
                 print("Command did not work. Please check arguments.")
-                print(str(e))
+                print(e)
                 self.log.NewEntry.set_success(False)
             # Commit to log
             self.log.commitEntry()
@@ -199,7 +199,8 @@ class Console:
                 for line in lines:
                     if line[0] != '#':
                         commands.append(line)
-                self.cmd_queue = self.cmd_queue + commands
+                # Move commands to the front to allow for recursive script calls
+                self.cmd_queue = commands + self.cmd_queue
         except:
             raise CommandError("Failed to load file: " + filename)
     # SYSTEM LEVEL COMMANDS
@@ -260,20 +261,20 @@ class Console:
         for address in list(self.clients.keys()):
             self.test(address)
     def test_local(self, ip):
-        local_data = self.clients[ip].model.data
-        results = self.clients[ip].model.test(data=local_data)
+        local_test_data = self.clients[ip].model.local_test_data
+        results = self.clients[ip].model.test(data=local_test_data)
         print("LOCAL RESULT - LOSS:", results[0], "ACCURACY:", results[1])
         self.log.commitResult(ip, "local", results)
     def test_within_group(self, addr, groupname):
         if groupname in self.groups.keys() and addr in self.clients.keys():
-            group_data = DI.AssembleData(self.groups[groupname])
+            group_data = DI.AssembleTestData(self.groups[groupname])
             results = self.clients[addr].model.test(data=group_data)
             print("GROUP RESULT - LOSS:", results[0], "ACCURACY:", results[1])
             self.log.commitResult(addr, "group", results)
         else:
             raise CommandError("Group name not valid. Current groups: " + str(self.groups.keys()))
     def test_global(self, ip):
-        global_data = DI.AssembleData(list(self.clients.keys()))
+        global_data = DI.AssembleTestData(list(self.clients.keys()))
         results = self.clients[ip].model.test(data=global_data)
         print("LOCAL RESULT - LOSS:", results[0], "ACCURACY:", results[1])
         self.log.commitResult(ip, "global", results)

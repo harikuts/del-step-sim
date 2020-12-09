@@ -16,6 +16,7 @@ X_INDEX = 1
 Y_INDEX = 2
 D_SIZE_INDEX = 0
 
+TRAIN_TEST_SPLIT = 0.85
 NUM_EPOCHS = 2
 
 class DataError(BaseException):
@@ -26,21 +27,27 @@ class DataError(BaseException):
 
 class Model:
     
-    def __init__(self, data=None, test_data=None):
-        self.data = data
+    def __init__(self):
+        self.data = None
         self.model = self.create_model()
         self.sharing_model = None
         self.communal_learning_rate = 0.5
-
-        self.test_data=test_data
+        self.local_test_data = None
+        self.global_test_data = None
 
     # Set data
     def setData(self, data):
-        self.data = data
+        div = int(TRAIN_TEST_SPLIT * data[D_SIZE_INDEX])
+        train_x = data[X_INDEX][:div]
+        test_x = data[X_INDEX][div:]
+        train_y = data[Y_INDEX][:div]
+        test_y = data[Y_INDEX][div:]
+        self.data = (len(train_x), train_x, train_y)
+        self.local_test_data = (len(test_x), test_x, test_y)
 
     # Set test data
     def setTestData(self, test_data):
-        self.test_data = test_data
+        self.global_test_data = test_data
         
     # Takes a training step (should be called train)
     def step(self):
@@ -51,7 +58,7 @@ class Model:
             raise DataError("Cannot train model. No data exists.")
     # Test function, calls evaluate on passed in data; default data is loaded in test data
     def test(self, data=None):
-        data = self.test_data if data is None else data
+        data = self.global_test_data if data is None else data
         if data is not None:
             loss, acc = self.model.evaluate(data[X_INDEX], data[Y_INDEX], verbose=1)
             return loss, acc
@@ -200,6 +207,7 @@ class DataIncubator:
         self.test_shares = {}
         self.group_shares = {}
         self.leases = {}
+        self.stored_test_data = {}
         self.global_data = None
         pass
     # Creates DataBin out of method get_dataset() and stores it into data_shares with name
@@ -217,40 +225,50 @@ class DataIncubator:
         # Check for client name (this will be required in the future)
         if client_name is not None:
             # Call retrieve method from databin
-            self.leases[client_name] = self.data_shares[name].retrieve(num_entries)
+            data = self.data_shares[name].retrieve(num_entries)
+            # Div up the data into train and test
+            div = int(TRAIN_TEST_SPLIT * data[D_SIZE_INDEX])
+            train_x = data[X_INDEX][:div]
+            test_x = data[X_INDEX][div:]
+            train_y = data[Y_INDEX][:div]
+            test_y = data[Y_INDEX][div:]
+            # Store test data
+            self.stored_test_data[client_name] = (len(test_x), test_x, test_y)
+            # Store all data in lease
+            self.leases[client_name] = data
             return self.leases[client_name]
         # Legacy in case client name isn't specified
         else:
             return self.data_shares[name].retrieve(num_entries)
     # Assembles group data based on list of nodes provided matched to names on the leases
-    def AssembleData(self, nodelist):
+    def AssembleTestData(self, nodelist):
         nodelist = list(nodelist)
         # Function to combine leased datasets
         def combine(data1, data2):
             data_size = data1[D_SIZE_INDEX] + data2[D_SIZE_INDEX]
-            print(data1[X_INDEX].shape, data2[X_INDEX].shape)
+            # print(data1[X_INDEX].shape, data2[X_INDEX].shape)
             x = np.concatenate((data1[X_INDEX], data2[X_INDEX]))
-            print(x.shape)
+            # print(x.shape)
             y = np.concatenate((data1[Y_INDEX], data2[Y_INDEX]))
             return (data_size, x, y)
         # Start with the first value
-        if nodelist[0] in self.leases.keys():
-            combined_data = self.leases[nodelist[0]]
+        if nodelist[0] in self.stored_test_data.keys():
+            combined_data = self.stored_test_data[nodelist[0]]
         else:
             raise DataError("DI lease name %s not valid. Currently on lease: %s" \
-                % (nodelist[0], str(list(self.leases.keys()))))
+                % (nodelist[0], str(list(self.stored_test_data.keys()))))
         # Continue with rest of the list
         for i in range(1, len(nodelist)):
-            if nodelist[i] in self.leases.keys():
-                combined_data = combine(combined_data, self.leases[nodelist[i]])
+            if nodelist[i] in self.stored_test_data.keys():
+                combined_data = combine(combined_data, self.stored_test_data[nodelist[i]])
             else:
                 raise DataError("DI lease name %s not valid. Currently on lease: %s" \
-                    % (nodelist[i], str(list(self.leases.keys()))))
+                    % (nodelist[i], str(list(self.stored_test_data.keys()))))
         return combined_data
 
     # Set global data out of all currently leased data, should be called after data is leased
     def setGlobalData(self):
-        self.global_data = self.AssembleData(self.leases.keys())
+        self.global_data = self.AssembleTestData(self.leases.keys())
         
     # DEFINE DATASET FUNCTIONS HERE (must return x_train, x_test, y_train, y_test)
     # MNIST Dataset
@@ -401,14 +419,16 @@ if __name__ == "__main__":
     # Test Model A
     data = DI.retrieve("MNIST", 5000, "Model A")
     test_data = DI.test_shares["MNIST"]
-    modelA = Model(data, test_data=test_data)
+    modelA = Model()
+    modelA.setData(data)
     modelA.step()
     modelA.test()
     print("Model A passed!")
     # Test Model B
     data = DI.retrieve("MNIST", 3000, "Model B")
     test_data = DI.test_shares["MNIST"]
-    modelB = Model(data, test_data=test_data)
+    modelB = Model()
+    modelB.setData(data)
     modelB.step()
     modelB.test()
     print("Model B passed!")
