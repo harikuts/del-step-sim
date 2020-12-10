@@ -404,7 +404,7 @@ if __name__ == "__main__":
     for ip in ipRegistry.keys():
         print("Creating client ", ind, " with IP ", ip, ".")
         clientDict[ip] = Client(netNode=ipRegistry[ip], model=Model())
-        clientDict[ip].model.setData(DI.retrieve("MNIST", 5000, ip))
+        clientDict[ip].model.setData(DI.retrieve("MNIST", 5800, ip))
         clientDict[ip].model.setTestData(DI.test_shares["MNIST"])
         ind += 1
     print("Clients created and linked to nodes.")

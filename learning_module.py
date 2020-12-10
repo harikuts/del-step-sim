@@ -158,7 +158,7 @@ class DataBin:
         # Package (data size, x features, y labels) and return
         return (number, x, y)
     # Weighted shuffle
-    def weightedShuffle(self, weight=0.5):
+    def weightedShuffle(self, weight=0.7):
         # Shuffle the dataset pre-emptively
         random.shuffle(self.data)
         # Get the piles to be sorted and unsorted
@@ -215,7 +215,7 @@ class DataIncubator:
         # Extract from dataset method
         x_train, x_test, y_train, y_test = get_dataset()
         # Create databin and store it
-        databin = DataBin(x_train, y_train)
+        databin = DataBin(np.concatenate((x_train,x_test)), np.concatenate((y_train,y_test)))
         self.data_shares[name] = databin
         # Store test data too
         assert len(x_test) == len(y_test)
