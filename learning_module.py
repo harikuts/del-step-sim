@@ -73,7 +73,7 @@ class Model:
         sizes = [float(x[0]) for x in recv_list]
         sizes = np.array(sizes, dtype=object)
         size_ratios = sizes / sum(sizes)
-        print(size_ratios) # DEBUG
+        # print(size_ratios) # DEBUG
         # print("Computed size ratios.")
         weights = np.array([x[1] for x in recv_list], dtype=object)
         parts = []

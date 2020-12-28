@@ -14,7 +14,7 @@ import logger
 import threading
 import random
 
-LINK_RELIABILITY = 0.5
+LINK_RELIABILITY = 1.0
 
 # Command Error (to be used within console)
 class CommandError(BaseException):

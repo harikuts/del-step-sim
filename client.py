@@ -23,12 +23,12 @@ class Record:
         else:
             return False
     def __str__(self):
-        return (str(self.ip) + " :: EXP" + str(self.expiry) + " :: DAT" + str(self.data_size) + " :: " + \
+        return ("\t" + str(self.ip) + " :: EXP" + str(self.expiry) + " :: DAT" + str(self.data_size) + " :: " + \
             str(self.weights[0][0][0]))
 
 # Holds and manages records and requests.
 class GuestBook:
-    def __init__(self, debug=True):
+    def __init__(self, debug=False):
         self.records = {}
         self.debug = debug
     def encounter(self, ip, shared_weights, expiry):
@@ -109,6 +109,7 @@ class Client:
             self.print_("Processing model from " + str(packet.src))
             self.guest_book.encounter(packet.src, packet.data, EXPIRY)
             # Get list of (size, model weights)
+            self.print_("Guestbook, currently: " + str(self.guest_book))
             self.print_("Aggregating model with new input.")
             size_weight_list = [(record.data_size, record.weights) for record in self.guest_book.records.values()]
             self.model.aggregate(size_weight_list)
@@ -117,7 +118,7 @@ class Client:
         self.guest_book.step()
 
     def aggregate_full(self, serial=False):
-        # Check inbox
+        # Check inbox (receive_all if receiving all at once, receive to receive one at a time)
         packet = self.net.receive()
         while packet is not None:
             self.model_ready = False
@@ -129,6 +130,7 @@ class Client:
         if not serial:
             self.guest_book.step()
         # Get list of (size, model weights) then AGGREGATE
+        self.print_("Guestbook, currently: " + str(self.guest_book))
         self.print_("Aggregating model with new input.")
         size_weight_list = [(record.data_size, record.weights) for record in self.guest_book.records.values()]
         self.model.aggregate(size_weight_list)
