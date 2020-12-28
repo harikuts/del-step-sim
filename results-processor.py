@@ -1,5 +1,7 @@
 import argparse
 import numpy as np
+from openpyxl import Workbook
+import csv
 
 parser = argparse.ArgumentParser()
 parser.add_argument(dest='filename', help="Include filename here.")
@@ -25,10 +27,12 @@ header.remove("ACC")
 for title in header:
     indexing = [entry[title] for entry in rich_info]
     indexing = np.unique(indexing)
-    if title is "CYCLE":
+    try:
         indexing = [int(i) for i in indexing]
-    index[title] = sorted(indexing)
-    print(title, index[title])
+    except ValueError:
+        pass
+    index[title] = [str(i) for i in sorted(indexing)]
+    # print(title, index[title])
 
 
 # BUILD
@@ -48,7 +52,7 @@ for entry in rich_info:
 # PROCESSING
 # Make output file header
 output_header = ["cycle",] + index["SCOPE"]
-print(output_header)
+# print(output_header)
 # Get each entry
 total_nodes = float(len(index["NODE"]))
 entries = []
@@ -64,10 +68,26 @@ for cycle in index["CYCLE"]:
         entry.append(str(avg))
     entries.append(','.join(entry))
 # Write file
+print("Writing", output)
 with open(output, 'w') as o:
     # Combine header and entries
     output_header = ','.join(output_header)
     lines = [output_header,] + entries
     corpus = '\n'.join(lines)
     o.write(corpus)
+
+# Write xlsx file
+xlsx_ouput = output.strip('.csv') + '.xlsx'
+print("Writing", xlsx_ouput)
+wb = Workbook()
+ws = wb.active
+with open(output, 'r') as f:
+    for row in csv.reader(f):
+        try:
+            row = [float(e) if '.' in e else int(e) for e in row]
+        except ValueError:
+            pass
+        ws.append(row)
+wb.save(xlsx_ouput)
+print("Done!")
     
