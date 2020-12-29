@@ -61,8 +61,9 @@ class Console:
                     break
                 # Feature control
                 elif cmd[0] == "link":
-                    self.link_reliability = float(cmd[1])
-                    print("Link reliability set to", self.link_reliability)
+                    self.set_link_reliability(float(cmd[1]))
+                elif cmd[0] == "lrate":
+                    self.set_learning_rate_all(float(cmd[1]))
                 # Functions
                 elif cmd[0] == "load":
                     self.load_script(cmd[1])
@@ -197,6 +198,13 @@ class Console:
             self.log.commitEntry()
 
     # COMMAND OPERATIONS
+    # FEATURE CONTROL
+    def set_link_reliability(self, val):
+        self.link_reliability = float(val)
+        print("Link reliability set to", self.link_reliability)
+    def set_learning_rate_all(self, val):
+        for client in self.clients.values():
+            client.model.setLearningRate(val)
     # SCRIPTING
     def load_script(self, filename):
         try:

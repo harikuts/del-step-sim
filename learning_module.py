@@ -31,9 +31,18 @@ class Model:
         self.data = None
         self.model = self.create_model()
         self.sharing_model = None
-        self.communal_learning_rate = 0.5
+        self.communal_learning_rate = 1.0
         self.local_test_data = None
         self.global_test_data = None
+
+    def print_(self, message):
+        # Client level print messaging
+        output = "MODEL::"
+        try:
+            output = output + str(message)
+        except:
+            output = output + "Message not printable."
+        print(output)
 
     # Set data
     def setData(self, data):
@@ -49,6 +58,11 @@ class Model:
     def setTestData(self, test_data):
         self.global_test_data = test_data
         
+    # Set new learning rate
+    def setLearningRate(self, val):
+        self.communal_learning_rate = val
+        self.print_("New learning rate is " + str(self.communal_learning_rate))
+
     # Takes a training step (should be called train)
     def step(self):
         if self.data is not None:
