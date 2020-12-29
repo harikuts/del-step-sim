@@ -14,6 +14,7 @@ import logger
 import threading
 import random
 
+# Default features
 LINK_RELIABILITY = 1.0
 
 # Command Error (to be used within console)
@@ -35,6 +36,8 @@ class Console:
         self.automatic_net_flag = False
         # Init log
         self.log = logger.Log()
+        # Set controllable features
+        self.link_reliability = LINK_RELIABILITY
     def run(self):
         while True:
             # Process command
@@ -56,6 +59,11 @@ class Console:
                 cmd = [c.strip() for c in cmd]
                 if cmd[0] == "exit":
                     break
+                # Feature control
+                elif cmd[0] == "link":
+                    self.link_reliability = float(cmd[1])
+                    print("Link reliability set to", self.link_reliability)
+                # Functions
                 elif cmd[0] == "load":
                     self.load_script(cmd[1])
                 elif cmd[0] == "step":
@@ -229,7 +237,7 @@ class Console:
     def floodall(self):
         for client in self.clients.values():
             for neighbor in client.net.neighbors.keys():
-                if random.random() < LINK_RELIABILITY:
+                if random.random() < self.link_reliability:
                     client.transmit_model(neighbor)
     # Limited flood
     def floodlim(self, ip, limit):
