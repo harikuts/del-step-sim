@@ -34,3 +34,4 @@ load ffa-cycle.txt
 # Reporting
 log results
 save results prelim-iid-ffa.csv
+exit
