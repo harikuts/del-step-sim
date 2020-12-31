@@ -386,13 +386,20 @@ if __name__ == "__main__":
     from datetime import datetime
     from dummy_net import build_fully_connected_graph
 
+    # Get data distributions and number of nodes
+    dist = [5800, 5800, 5800, 5800, 5800, 5800, 5800, 5800, 5800, 5800, 5800, 5800]
+    num_nodes = len(dist)
+
     # Create a graph
     graph = {}
+    # Create a distribution guide
+    dist_guide = {}
 
-    nodes = ["10.0.0.%d" % (i+1) for i in range(12)]
+    nodes = ["10.0.0.%d" % (i+1) for i in range(num_nodes)]
     # nodes = ["10.0.0.1", "10.0.0.2", "10.0.0.3", "10.0.0.4", "10.0.0.5"]
-    for node in nodes:
+    for pos, node in enumerate(nodes):
         graph[node] = []
+        dist_guide[node] = dist[pos]
     graph = build_fully_connected_graph(graph)
 
 
@@ -420,7 +427,7 @@ if __name__ == "__main__":
     for ip in ipRegistry.keys():
         print("Creating client ", ind, " with IP ", ip, ".")
         clientDict[ip] = Client(netNode=ipRegistry[ip], model=Model())
-        clientDict[ip].model.setData(DI.retrieve("MNIST", 5800, ip))
+        clientDict[ip].model.setData(DI.retrieve("MNIST", dist_guide[ip], ip))
         clientDict[ip].model.setTestData(DI.test_shares["MNIST"])
         ind += 1
     print("Clients created and linked to nodes.")
