@@ -385,9 +385,20 @@ if __name__ == "__main__":
     import time
     from datetime import datetime
     from dummy_net import build_fully_connected_graph
+    import configparser
+    import argparse
 
-    # Get data distributions and number of nodes
-    dist = [5800, 5800, 5800, 5800, 5800, 5800, 5800, 5800, 5800, 5800, 5800, 5800]
+    parser = argparse.ArgumentParser()
+    parser.add_argument(dest='config', help="Startup configuration.")
+    args = parser.parse_args()
+
+    # Get configuration (data distributions and number of nodes)
+    config = configparser.ConfigParser()
+    config.read('startup-config.txt')
+    dist = config[args.config]['DataDistribution']
+    dist = [int(n.strip()) for n in dist.split(',')]
+
+    # dist = [5800, 5800, 5800, 5800, 5800, 5800, 5800, 5800, 5800, 5800, 5800, 5800]
     num_nodes = len(dist)
 
     # Create a graph
