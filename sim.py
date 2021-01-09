@@ -175,7 +175,10 @@ class Console:
                             raise CommandError("Log command invalid.")
                 elif cmd[0] == "save":
                     if cmd[1] == "results":
-                        self.save_results(cmd[2])
+                        if len(cmd) == 3:
+                            self.save_results(cmd[2])
+                        else:
+                            self.save_results(input("Enter save file name:").strip('.csv') + '.csv')
                 else:
                     raise CommandError("Command does not exist.")
                 # Process network step if auto net
