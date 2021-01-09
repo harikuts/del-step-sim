@@ -1,0 +1,15 @@
+cycle
+train
+group g1 share
+group g2 share
+group g3 share
+ag
+test 10.0.0.1 local
+test 10.0.0.1 group g1
+test 10.0.0.1 global
+test 10.0.0.7 local
+test 10.0.0.7 group g2
+test 10.0.0.7 global
+test 10.0.0.12 local
+test 10.0.0.12 group g3
+test 10.0.0.12 global

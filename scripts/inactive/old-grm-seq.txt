@@ -1,0 +1,48 @@
+# Set up groups
+group create g1
+group create g2
+group create g3
+group g1 add 10.0.0.1 10.0.0.2 10.0.0.3 10.0.0.4
+group g2 add 10.0.0.5 10.0.0.6 10.0.0.7 10.0.0.8
+group g3 add 10.0.0.9 10.0.0.10 10.0.0.11 10.0.0.12
+autonet
+# Train all, share within groups, aggregate, test our representatives
+# Cycle 0
+load group-cycle.txt
+# Cycle 1
+load mule-movements-12-tick.txt
+load group-cycle.txt
+# Cycle 2
+load mule-movements-12-tock.txt
+load group-cycle.txt
+# Cycle 3
+load mule-movements-12-tick.txt
+load group-cycle.txt
+# Cycle 4
+load mule-movements-12-tock.txt
+load group-cycle.txt
+# Cycle 5
+load mule-movements-12-tick.txt
+load group-cycle.txt
+# Cycle 6
+load mule-movements-12-tock.txt
+load group-cycle.txt
+# Cycle 7
+load mule-movements-12-tick.txt
+load group-cycle.txt
+# Cycle 8
+load mule-movements-12-tock.txt
+load group-cycle.txt
+# Cycle 9
+load mule-movements-12-tick.txt
+load group-cycle.txt
+# Cycle 10
+load mule-movements-12-tock.txt
+load group-cycle.txt
+# Cycle 11
+load mule-movements-12-tick.txt
+load group-cycle.txt
+# Reporting
+log results
+save results group-mule-run.csv
+exit
