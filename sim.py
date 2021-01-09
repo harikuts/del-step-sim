@@ -392,14 +392,13 @@ if __name__ == "__main__":
     parser.add_argument(dest='config', help="Startup configuration.")
     args = parser.parse_args()
 
-    # Get configuration (data distributions and number of nodes)
+    # Get configuration (data distributions and number of nodes and shuffle weight)
     config = configparser.ConfigParser()
     config.read('startup-config.txt')
     dist = config[args.config]['DataDistribution']
     dist = [int(n.strip()) for n in dist.split(',')]
-
-    # dist = [5800, 5800, 5800, 5800, 5800, 5800, 5800, 5800, 5800, 5800, 5800, 5800]
     num_nodes = len(dist)
+    shuffleWeight = float(config[args.config]['ShuffleWeight'])
 
     # Create a graph
     graph = {}
@@ -430,7 +429,7 @@ if __name__ == "__main__":
     # Create Incubator with and load data
     # MI = ModelIncubator([0.83, 0.83, 0.83, 0.83, 0.2])
     DI = DataIncubator()
-    DI.createDataBin("MNIST", DI.get_mnist)
+    DI.createDataBin("MNIST", DI.get_mnist, shuffleWeight=shuffleWeight)
 
     # Create clients
     clientDict = {}

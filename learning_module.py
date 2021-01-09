@@ -136,7 +136,7 @@ class Model:
 
 # DataBin class used to retrieve and return data
 class DataBin:
-    def __init__(self, x, y):
+    def __init__(self, x, y, shuffleWeight=0.5):
         # Validate that the data lengths match
         try:
             assert len(x) == len(y)
@@ -148,7 +148,7 @@ class DataBin:
             self.data.append((x[i], y[i]))
         self.data_size = len(self.data)
         # Weighted shuffle the data
-        self.weightedShuffle()
+        self.weightedShuffle(shuffleWeight)
         self.verifyDistribution()
     # Get information about what information is available
     def getSize(self):
@@ -172,7 +172,7 @@ class DataBin:
         # Package (data size, x features, y labels) and return
         return (number, x, y)
     # Weighted shuffle
-    def weightedShuffle(self, weight=0.7):
+    def weightedShuffle(self, weight):
         # Shuffle the dataset pre-emptively
         random.shuffle(self.data)
         # Get the piles to be sorted and unsorted
@@ -225,11 +225,11 @@ class DataIncubator:
         self.global_data = None
         pass
     # Creates DataBin out of method get_dataset() and stores it into data_shares with name
-    def createDataBin(self, name, get_dataset):
+    def createDataBin(self, name, get_dataset, shuffleWeight=0.5):
         # Extract from dataset method
         x_train, x_test, y_train, y_test = get_dataset()
         # Create databin and store it
-        databin = DataBin(np.concatenate((x_train,x_test)), np.concatenate((y_train,y_test)))
+        databin = DataBin(np.concatenate((x_train,x_test)), np.concatenate((y_train,y_test)), shuffleWeight=shuffleWeight)
         self.data_shares[name] = databin
         # Store test data too
         assert len(x_test) == len(y_test)

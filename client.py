@@ -4,7 +4,7 @@ import secrets
 import random
 from dummy_net import DummyNet
 
-EXPIRY = 5
+EXPIRY = 2
 
 # A single record.
 class Record:

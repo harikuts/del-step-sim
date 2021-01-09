@@ -1,5 +1,7 @@
 [IID]
 DataDistribution = 5800, 5800, 5800, 5800, 5800, 5800, 5800, 5800, 5800, 5800, 5800, 5800
+ShuffleWeight = 0.5
 
 [NONIID]
 DataDistribution = 2000, 4000, 8000, 8000, 12000, 2000, 14000, 12000, 1000, 2000, 3000, 2000
+ShuffleWeight = 0.85
