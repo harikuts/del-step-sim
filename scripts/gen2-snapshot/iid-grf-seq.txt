@@ -1,0 +1,48 @@
+# Set up groups
+load set-iid-groups.txt
+autonet
+link 0.5
+# Train all, share within groups, aggregate, test our representatives
+# Cycle 0
+load grf-cycle.txt
+load test-iid.txt
+# Cycle 1
+load group-cycle.txt
+load test-iid.txt
+# Cycle 2
+load group-cycle.txt
+load test-iid.txt
+# Cycle 3
+load group-cycle.txt
+load test-iid.txt
+# Cycle 4
+load grf-cycle.txt
+load test-iid.txt
+# Cycle 5
+load group-cycle.txt
+load test-iid.txt
+# Cycle 6
+load group-cycle.txt
+load test-iid.txt
+# Cycle 7
+load group-cycle.txt
+load test-iid.txt
+# Cycle 8
+load grf-cycle.txt
+load test-iid.txt
+# Cycle 9
+load group-cycle.txt
+load test-iid.txt
+# Cycle 10
+load group-cycle.txt
+load test-iid.txt
+# Cycle 11
+load group-cycle.txt
+load test-iid.txt
+# Cycle 12
+load grf-cycle.txt
+load test-iid.txt
+# Reporting
+log results
+save results
+exit

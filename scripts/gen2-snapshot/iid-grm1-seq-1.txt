@@ -1,0 +1,101 @@
+# Set up groups
+load set-iid-groups.txt
+autonet
+# Train all, share within groups, aggregate, test our representatives
+# Cycle 0
+load group-cycle.txt
+load test-iid.txt
+# MOVE A
+group g1 remove 10.0.0.2
+group g2 add 10.0.0.2
+group g2 remove 10.0.0.7
+group g3 add 10.0.0.7
+group g3 remove 10.0.0.9
+group g1 add 10.0.0.9
+# Cycle 1
+load group-cycle.txt
+# MOVE BACK
+load set-iid-groups.txt
+# Cycle 2
+load group-cycle.txt
+# TEST
+load test-iid.txt
+# MOVE B
+group g1 remove 10.0.0.1
+group g3 add 10.0.0.1
+group g2 remove 10.0.0.5
+group g1 add 10.0.0.5
+group g3 remove 10.0.0.11
+group g2 add 10.0.0.11
+# Cycle 3
+load group-cycle.txt
+# MOVE BACK
+load set-iid-groups.txt
+# Cycle 4
+load group-cycle.txt
+# TEST
+load test-iid.txt
+# MOVE C
+group g1 remove 10.0.0.2
+group g2 add 10.0.0.2
+group g2 remove 10.0.0.5
+group g3 add 10.0.0.5
+group g3 remove 10.0.0.11
+group g1 add 10.0.0.11
+# Cycle 5
+load group-cycle.txt
+# MOVE BACK
+load set-iid-groups.txt
+# Cycle 6
+load group-cycle.txt
+# TEST
+load test-iid.txt
+# MOVE D
+group g1 remove 10.0.0.3
+group g3 add 10.0.0.3
+group g2 remove 10.0.0.5
+group g1 add 10.0.0.5
+group g3 remove 10.0.0.12
+group g2 add 10.0.0.12
+# Cycle 7
+load group-cycle.txt
+# MOVE BACK
+load set-iid-groups.txt
+# Cycle 8
+load group-cycle.txt
+# TEST
+load test-iid.txt
+# MOVE E
+group g1 remove 10.0.0.1
+group g2 add 10.0.0.1
+group g2 remove 10.0.0.8
+group g3 add 10.0.0.8
+group g3 remove 10.0.0.10
+group g1 add 10.0.0.10
+# Cycle 9
+load group-cycle.txt
+# MOVE BACK
+load set-iid-groups.txt
+# Cycle 10
+load group-cycle.txt
+# TEST
+load test-iid.txt
+# MOVE F
+group g1 remove 10.0.0.4
+group g3 add 10.0.0.4
+group g2 remove 10.0.0.8
+group g1 add 10.0.0.8
+group g3 remove 10.0.0.9
+group g2 add 10.0.0.9
+# Cycle 11
+load group-cycle.txt
+# MOVE BACK
+load set-iid-groups.txt
+# Cycle 12
+load group-cycle.txt
+# TEST
+load test-iid.txt
+# Reporting
+log results
+save results
+exit

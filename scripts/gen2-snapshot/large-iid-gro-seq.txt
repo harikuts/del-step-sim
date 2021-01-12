@@ -1,0 +1,56 @@
+# Set up groups
+load set-large-iid-groups.txt
+autonet
+# Train all, share within groups, aggregate, test our representatives
+# Cycle 0
+load large-group-cycle.txt
+load test-large-st.txt
+# Cycle 1
+load large-group-cycle.txt
+load test-large-st.txt
+# Cycle 2
+load large-group-cycle.txt
+load test-large-st.txt
+# Cycle 3
+load large-group-cycle.txt
+load test-large-st.txt
+# Cycle 4
+load large-group-cycle.txt
+load test-large-st.txt
+# Cycle 5
+load large-group-cycle.txt
+load test-large-st.txt
+# Cycle 6
+load large-group-cycle.txt
+load test-large-st.txt
+# Cycle 7
+load large-group-cycle.txt
+load test-large-st.txt
+# Cycle 8
+load large-group-cycle.txt
+load test-large-st.txt
+# Cycle 9
+load large-group-cycle.txt
+load test-large-st.txt
+# Cycle 10
+load large-group-cycle.txt
+load test-large-st.txt
+# Cycle 11
+load large-group-cycle.txt
+load test-large-st.txt
+# Cycle 12
+load large-group-cycle.txt
+load test-large-st.txt
+# Cycle 13
+load large-group-cycle.txt
+load test-large-st.txt
+# Cycle 14
+load large-group-cycle.txt
+load test-large-st.txt
+# Cycle 15
+load large-group-cycle.txt
+load test-large-st.txt
+# Reporting
+log results
+save results
+exit

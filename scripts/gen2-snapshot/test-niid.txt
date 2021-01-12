@@ -1,0 +1,36 @@
+test 10.0.0.1 local
+test 10.0.0.1 group g1
+test 10.0.0.1 global
+test 10.0.0.2 local
+test 10.0.0.2 group g1
+test 10.0.0.2 global
+test 10.0.0.3 local
+test 10.0.0.3 group g2
+test 10.0.0.3 global
+test 10.0.0.4 local
+test 10.0.0.4 group g2
+test 10.0.0.4 global
+test 10.0.0.5 local
+test 10.0.0.5 group g2
+test 10.0.0.5 global
+test 10.0.0.6 local
+test 10.0.0.6 group g2
+test 10.0.0.6 global
+test 10.0.0.7 local
+test 10.0.0.7 group g2
+test 10.0.0.7 global
+test 10.0.0.8 local
+test 10.0.0.8 group g2
+test 10.0.0.8 global
+test 10.0.0.9 local
+test 10.0.0.9 group g3
+test 10.0.0.9 global
+test 10.0.0.10 local
+test 10.0.0.10 group g3
+test 10.0.0.10 global
+test 10.0.0.11 local
+test 10.0.0.11 group g3
+test 10.0.0.11 global
+test 10.0.0.12 local
+test 10.0.0.12 group g3
+test 10.0.0.12 global

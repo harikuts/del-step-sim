@@ -1,0 +1,47 @@
+# Set up groups
+load set-niid-groups.txt
+autonet
+# Train all, share within groups, aggregate, test our representatives
+# Cycle 0
+load ffa-cycle.txt
+load test-niid.txt
+# Cycle 1
+load ffa-cycle.txt
+load test-niid.txt
+# Cycle 2
+load ffa-cycle.txt
+load test-niid.txt
+# Cycle 3
+load ffa-cycle.txt
+load test-niid.txt
+# Cycle 4
+load ffa-cycle.txt
+load test-niid.txt
+# Cycle 5
+load ffa-cycle.txt
+load test-niid.txt
+# Cycle 6
+load ffa-cycle.txt
+load test-niid.txt
+# Cycle 7
+load ffa-cycle.txt
+load test-niid.txt
+# Cycle 8
+load ffa-cycle.txt
+load test-niid.txt
+# Cycle 9
+load ffa-cycle.txt
+load test-niid.txt
+# Cycle 10
+load ffa-cycle.txt
+load test-niid.txt
+# Cycle 11
+load ffa-cycle.txt
+load test-niid.txt
+# Cycle 12
+load ffa-cycle.txt
+load test-niid.txt
+# Reporting
+log results
+save results
+exit
