@@ -1,83 +1,83 @@
 # Set up groups
-link 1.0
-load set-medium-iid-groups.txt
+link 0.5
+load set-medium-niid-groups.txt
 autonet
 # Train all, share within groups, aggregate, test our representatives
 # Cycle 0
 load ffa-cycle.txt
-load test-medium-iid.txt
+load test-medium-niid.txt
 # Cycle 1
 load ffa-cycle.txt
-load test-medium-iid.txt
+load test-medium-niid.txt
 # Cycle 2
 load ffa-cycle.txt
-load test-medium-iid.txt
+load test-medium-niid.txt
 # Cycle 3
 load ffa-cycle.txt
-load test-medium-iid.txt
+load test-medium-niid.txt
 # Cycle 4
 load ffa-cycle.txt
-load test-medium-iid.txt
+load test-medium-niid.txt
 # Cycle 5
 load ffa-cycle.txt
-load test-medium-iid.txt
+load test-medium-niid.txt
 # Cycle 6
 load ffa-cycle.txt
-load test-medium-iid.txt
+load test-medium-niid.txt
 # Cycle 7
 load ffa-cycle.txt
-load test-medium-iid.txt
+load test-medium-niid.txt
 # Cycle 8
 load ffa-cycle.txt
-load test-medium-iid.txt
+load test-medium-niid.txt
 # Cycle 9
 load ffa-cycle.txt
-load test-medium-iid.txt
+load test-medium-niid.txt
 # Cycle 10
 load ffa-cycle.txt
-load test-medium-iid.txt
+load test-medium-niid.txt
 # Cycle 11
 load ffa-cycle.txt
-load test-medium-iid.txt
+load test-medium-niid.txt
 # Cycle 12
 load ffa-cycle.txt
-load test-medium-iid.txt
+load test-medium-niid.txt
 # Cycle 13
 load ffa-cycle.txt
-load test-medium-iid.txt
+load test-medium-niid.txt
 # Cycle 14
 load ffa-cycle.txt
-load test-medium-iid.txt
+load test-medium-niid.txt
 # Cycle 15
 load ffa-cycle.txt
-load test-medium-iid.txt
+load test-medium-niid.txt
 # Cycle 16
 load ffa-cycle.txt
-load test-medium-iid.txt
+load test-medium-niid.txt
 # Cycle 17
 load ffa-cycle.txt
-load test-medium-iid.txt
+load test-medium-niid.txt
 # Cycle 18
 load ffa-cycle.txt
-load test-medium-iid.txt
+load test-medium-niid.txt
 # Cycle 19
 load ffa-cycle.txt
-load test-medium-iid.txt
+load test-medium-niid.txt
 # Cycle 20
 load ffa-cycle.txt
-load test-medium-iid.txt
+load test-medium-niid.txt
 # Cycle 21
 load ffa-cycle.txt
-load test-medium-iid.txt
+load test-medium-niid.txt
 # Cycle 22
 load ffa-cycle.txt
-load test-medium-iid.txt
+load test-medium-niid.txt
 # Cycle 23
 load ffa-cycle.txt
-load test-medium-iid.txt
+load test-medium-niid.txt
 # Cycle 24
 load ffa-cycle.txt
-load test-medium-iid.txt
+load test-medium-niid.txt
 # Reporting
 log results
 save results
