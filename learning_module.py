@@ -9,15 +9,22 @@ import os
 import random
 import statistics
 import pdb
+import pickle
+import io
+from global_encoder import WORD_MAP_FILE
 
+# Environment information
 CUR_DIR = os.getcwd()
-
+# Data object indices
 X_INDEX = 1
 Y_INDEX = 2
 D_SIZE_INDEX = 0
-
+# Training variables
 TRAIN_TEST_SPLIT = 0.85
 NUM_EPOCHS = 2
+# Word map for OHE
+with io.open(WORD_MAP_FILE, 'rb') as f:
+    WORD_MAP = pickle.load(f)
 
 class DataError(BaseException):
     def __init__(self, error_message=None):
@@ -307,6 +314,33 @@ class DataIncubator:
         x_train, x_test = x_train / 255.0, x_test / 255.0
         return x_train, x_test, y_train, y_test
 
+    # Twitter Datasets
+    def get_dataset_from_corpus(self, filename):
+        # Load corpus from file
+        corpus = []
+        with io.open(filename, 'r', encoding="utf-8") as f:
+            for line in f.readlines():
+                corpus.append(line.split())
+        # Build sequences
+        sequences = []
+        for phrase in corpus:
+            if len(phrase) >= SEQ_LEN+1:
+                for i in range(SEQ_LEN, len(phrase)):
+                    sequence = phrase[i-SEQ_LEN:i+1]
+                    sequences.append(sequence)
+        # One-hot encoding to prepare dataset
+        X = np.zeros((len(sequences), SEQ_LEN, len(unique_words)), dtype=bool)
+        y = np.zeros((len(sequences), len(unique_words)), dtype=bool)
+        for i, sequence in enumerate(sequences):
+            prev_words = sequence[:-1]
+            next_word = sequence[-1]
+            # print(prev_words, next_word)
+            for j, prev_word in enumerate(prev_words):
+                X[i, j, unique_word_index[prev_word]] = 1
+            y[i, unique_word_index[next_word]] = 1
+        # Return x and y
+        return X, y
+        
 
 # NOT FUNCTIONAL AT THE MOMENT
 class ModelIncubator:
