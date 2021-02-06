@@ -61,9 +61,9 @@ class Model:
         self.data = (len(train_x), train_x, train_y)
         self.local_test_data = (len(test_x), test_x, test_y)
 
-    # Set test data
-    def setTestData(self, test_data):
-        self.global_test_data = test_data
+    # Set global test data.
+    def setGlobalTestData(self, global_test_data):
+        self.global_test_data = global_test_data
         
     # Set new learning rate
     def setLearningRate(self, val):
@@ -153,9 +153,11 @@ class DataBin:
         self.data = []
         for i in range(len(x)):
             self.data.append((x[i], y[i]))
+        # Shuffle this data
+        random.shuffle(self.data)
         self.data_size = len(self.data)
         # Weighted shuffle the data
-        self.weightedShuffle(shuffleWeight)
+        # self.weightedShuffle(shuffleWeight)
         self.verifyDistribution()
     # Get information about what information is available
     def getSize(self):
@@ -178,6 +180,9 @@ class DataBin:
         print("Retrieved %d entries, %d are left." % (number, self.getSize()))
         # Package (data size, x features, y labels) and return
         return (number, x, y)
+    # Retrieve all
+    def retrieve_all(self):
+        return self.retrieve(self.data_size)
     # Weighted shuffle
     def weightedShuffle(self, weight):
         # Shuffle the dataset pre-emptively
@@ -234,19 +239,23 @@ class DataIncubator:
     # Creates DataBin out of method get_dataset() and stores it into data_shares with name
     def createDataBin(self, name, get_dataset, shuffleWeight=0.5):
         # Extract from dataset method
-        x_train, x_test, y_train, y_test = get_dataset()
+        x, y = get_dataset()
+        # x_train, x_test, y_train, y_test = get_dataset()
         # Create databin and store it
-        databin = DataBin(np.concatenate((x_train,x_test)), np.concatenate((y_train,y_test)), shuffleWeight=shuffleWeight)
+        databin = DataBin(x, y, shuffleWeight=shuffleWeight)
         self.data_shares[name] = databin
         # Store test data too
-        assert len(x_test) == len(y_test)
-        self.test_shares[name] = (len(x_test), x_test, y_test)
+        # assert len(x_test) == len(y_test)
+        # self.test_shares[name] = (len(x_test), x_test, y_test)
     # Retrieves from specified databin
-    def retrieve(self, name, num_entries, client_name=None):
+    def retrieve(self, name, num_entries=None, client_name=None):
         # Check for client name (this will be required in the future)
         if client_name is not None:
             # Call retrieve method from databin
-            data = self.data_shares[name].retrieve(num_entries)
+            if num_entries is None:
+                data = self.data_shares[name].retrieve_all()
+            else:
+                data = self.data_shares[name].retrieve(num_entries)
             # Div up the data into train and test
             div = int(TRAIN_TEST_SPLIT * data[D_SIZE_INDEX])
             train_x = data[X_INDEX][:div]
@@ -312,10 +321,10 @@ class DataIncubator:
             y_test = data['y_test']
         print ("Unpacked data!")
         x_train, x_test = x_train / 255.0, x_test / 255.0
-        return x_train, x_test, y_train, y_test
+        return np.concatenate((x_train, x_test)), np.concatenate((y_train, y_test))
 
     # Twitter Datasets
-    def get_dataset_from_corpus(self, filename):
+    def get_twitter_dataset(self, filename):
         # Load corpus from file
         corpus = []
         with io.open(filename, 'r', encoding="utf-8") as f:

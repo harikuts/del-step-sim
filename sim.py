@@ -398,21 +398,28 @@ if __name__ == "__main__":
     # Get configuration (data distributions and number of nodes and shuffle weight)
     config = configparser.ConfigParser()
     config.read('startup-config.txt')
-    dist = config[args.config]['DataDistribution']
-    dist = [int(n.strip()) for n in dist.split(',')]
-    num_nodes = len(dist)
-    shuffleWeight = float(config[args.config]['ShuffleWeight'])
+    # dist = config[args.config]['DataDistribution']
+    # dist = [int(n.strip()) for n in dist.split(',')]
+    # num_nodes = len(dist)
+    # shuffleWeight = float(config[args.config]['ShuffleWeight'])
+    ds_files = config[args.config]['DS_FILES']
+    ds_files = [n.strip() for n in ds_files.split(',')]
+    num_nodes = len(ds_files)
 
+    # Create node names
+    nodes = ["10.0.0.%d" % (i+1) for i in range(num_nodes)]
     # Create a graph
     graph = {}
     # Create a distribution guide
-    dist_guide = {}
+    # dist_guide = {}
+    # Create a file guide
+    file_guide = {}
 
-    nodes = ["10.0.0.%d" % (i+1) for i in range(num_nodes)]
-    # nodes = ["10.0.0.1", "10.0.0.2", "10.0.0.3", "10.0.0.4", "10.0.0.5"]
+    # Create graph and fill in file guide
     for pos, node in enumerate(nodes):
         graph[node] = []
-        dist_guide[node] = dist[pos]
+        # dist_guide[node] = dist[pos]
+        file_guide[node] = ds_files[pos]
     graph = build_fully_connected_graph(graph)
 
 
@@ -432,18 +439,23 @@ if __name__ == "__main__":
     # Create Incubator with and load data
     # MI = ModelIncubator([0.83, 0.83, 0.83, 0.83, 0.2])
     DI = DataIncubator()
-    DI.createDataBin("MNIST", DI.get_mnist, shuffleWeight=shuffleWeight)
+    for f in ds_files:
+        DI.createDataBin(f, DI.get_twitter_dataset(f))
 
     # Create clients
     clientDict = {}
-    ind = 0
-    for ip in ipRegistry.keys():
+    for ind, ip in enumerate(ipRegistry.keys()):
         print("Creating client ", ind, " with IP ", ip, ".")
         clientDict[ip] = Client(netNode=ipRegistry[ip], model=Model())
-        clientDict[ip].model.setData(DI.retrieve("MNIST", dist_guide[ip], ip))
-        clientDict[ip].model.setTestData(DI.test_shares["MNIST"])
-        ind += 1
+        clientDict[ip].model.setData(DI.retrieve(file_guide[ip], client_name=ip))
+        # clientDict[ip].model.setTestData(DI.test_shares["MNIST"])
     print("Clients created and linked to nodes.")
+
+    # Update global data and assign it to nodes.
+    print("Setting global data...")
+    DI.setGlobalData()
+    for ip in ipRegistry.keys():
+        clientDict[ip].model.setGlobalTestData(DI.global_data)
 
     # Retrieve data for clients.
 
