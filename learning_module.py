@@ -22,6 +22,7 @@ D_SIZE_INDEX = 0
 # Training variables
 TRAIN_TEST_SPLIT = 0.85
 NUM_EPOCHS = 2
+SEQ_LEN = 1
 # Word map for OHE
 with io.open(WORD_MAP_FILE, 'rb') as f:
     WORD_MAP = pickle.load(f)
@@ -34,9 +35,9 @@ class DataError(BaseException):
 
 class Model:
     
-    def __init__(self):
+    def __init__(self, model_args=None):
         self.data = None
-        self.model = self.create_model()
+        self.model = self.LSTM(*model_args)
         self.sharing_model = None
         self.communal_learning_rate = 1.0
         self.local_test_data = None
@@ -139,6 +140,13 @@ class Model:
         ])
         loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
         model.compile(optimizer='adam', loss=loss_fn, metrics=['accuracy'])
+        return model
+
+    def LSTM(self, vocab_size):
+        model = tf.keras.Sequential()
+        model.add(tf.keras.layers.LSTM(512, input_shape=(SEQ_LEN, vocab_size), kernel_regularizer=tf.keras.regularizers.l2(0.01), bias_regularizer=tf.keras.regularizers.l2(0.001)))
+        model.add(tf.keras.layers.Dense(vocab_size, activation="softmax"))
+        model.compile(loss="categorical_crossentropy", optimizer=tf.keras.optimizers.RMSprop(lr=0.001), metrics=['accuracy'])
         return model
 
 # DataBin class used to retrieve and return data
@@ -325,7 +333,6 @@ class DataIncubator:
 
     # Twitter Datasets
     def get_twitter_dataset(self, filename, encoder):
-        SEQ_LEN = 1
         # Load corpus from file
         corpus = []
         with io.open(filename, 'r', encoding="utf-8") as f:

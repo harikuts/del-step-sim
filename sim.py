@@ -452,7 +452,7 @@ if __name__ == "__main__":
     clientDict = {}
     for ind, ip in enumerate(ipRegistry.keys()):
         print("Creating client ", ind, " with IP ", ip, ".")
-        clientDict[ip] = Client(netNode=ipRegistry[ip], model=Model())
+        clientDict[ip] = Client(netNode=ipRegistry[ip], model=Model(model_args=[len(word_map)]))
         clientDict[ip].model.setData(DI.retrieve(file_guide[ip], client_name=ip))
         # clientDict[ip].model.setTestData(DI.test_shares["MNIST"])
     print("Clients created and linked to nodes.")
