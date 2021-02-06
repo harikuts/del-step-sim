@@ -2,3 +2,5 @@ cycle
 train
 flood
 ag
+test local
+test global
