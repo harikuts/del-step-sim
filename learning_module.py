@@ -143,7 +143,7 @@ class Model:
 
 # DataBin class used to retrieve and return data
 class DataBin:
-    def __init__(self, x, y, shuffleWeight=0.5):
+    def __init__(self, x, y):
         # Validate that the data lengths match
         try:
             assert len(x) == len(y)
@@ -158,7 +158,7 @@ class DataBin:
         self.data_size = len(self.data)
         # Weighted shuffle the data
         # self.weightedShuffle(shuffleWeight)
-        self.verifyDistribution()
+        # self.verifyDistribution()
     # Get information about what information is available
     def getSize(self):
         return(self.data_size)
@@ -237,12 +237,12 @@ class DataIncubator:
         self.global_data = None
         pass
     # Creates DataBin out of method get_dataset() and stores it into data_shares with name
-    def createDataBin(self, name, get_dataset, shuffleWeight=0.5):
+    def createDataBin(self, name, get_dataset, gd_args):
         # Extract from dataset method
-        x, y = get_dataset()
+        x, y = get_dataset(*gd_args)
         # x_train, x_test, y_train, y_test = get_dataset()
         # Create databin and store it
-        databin = DataBin(x, y, shuffleWeight=shuffleWeight)
+        databin = DataBin(x, y)
         self.data_shares[name] = databin
         # Store test data too
         # assert len(x_test) == len(y_test)
@@ -324,7 +324,8 @@ class DataIncubator:
         return np.concatenate((x_train, x_test)), np.concatenate((y_train, y_test))
 
     # Twitter Datasets
-    def get_twitter_dataset(self, filename):
+    def get_twitter_dataset(self, filename, encoder):
+        SEQ_LEN = 1
         # Load corpus from file
         corpus = []
         with io.open(filename, 'r', encoding="utf-8") as f:
@@ -338,15 +339,15 @@ class DataIncubator:
                     sequence = phrase[i-SEQ_LEN:i+1]
                     sequences.append(sequence)
         # One-hot encoding to prepare dataset
-        X = np.zeros((len(sequences), SEQ_LEN, len(unique_words)), dtype=bool)
-        y = np.zeros((len(sequences), len(unique_words)), dtype=bool)
+        X = np.zeros((len(sequences), SEQ_LEN, len(encoder)), dtype=bool)
+        y = np.zeros((len(sequences), len(encoder)), dtype=bool)
         for i, sequence in enumerate(sequences):
             prev_words = sequence[:-1]
             next_word = sequence[-1]
             # print(prev_words, next_word)
             for j, prev_word in enumerate(prev_words):
-                X[i, j, unique_word_index[prev_word]] = 1
-            y[i, unique_word_index[next_word]] = 1
+                X[i, j, encoder[prev_word]] = 1
+            y[i, encoder[next_word]] = 1
         # Return x and y
         return X, y
         

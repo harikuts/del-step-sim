@@ -390,6 +390,8 @@ if __name__ == "__main__":
     from dummy_net import build_fully_connected_graph
     import configparser
     import argparse
+    import pickle
+    import io
 
     parser = argparse.ArgumentParser()
     parser.add_argument(dest='config', help="Startup configuration.")
@@ -402,6 +404,7 @@ if __name__ == "__main__":
     # dist = [int(n.strip()) for n in dist.split(',')]
     # num_nodes = len(dist)
     # shuffleWeight = float(config[args.config]['ShuffleWeight'])
+    encoder_file = config[args.config]['ENCODER']
     ds_files = config[args.config]['DS_FILES']
     ds_files = [n.strip() for n in ds_files.split(',')]
     num_nodes = len(ds_files)
@@ -436,11 +439,14 @@ if __name__ == "__main__":
         ipRegistry[addr].init_network(ipRegistry)
     print("Registered nodes in network graph.")
 
+    # Load encoder word map
+    with io.open(encoder_file, 'rb') as f:
+        word_map = pickle.load(f)
     # Create Incubator with and load data
     # MI = ModelIncubator([0.83, 0.83, 0.83, 0.83, 0.2])
     DI = DataIncubator()
     for f in ds_files:
-        DI.createDataBin(f, DI.get_twitter_dataset(f))
+        DI.createDataBin(f, DI.get_twitter_dataset, [f, word_map])
 
     # Create clients
     clientDict = {}
