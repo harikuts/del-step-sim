@@ -26,10 +26,12 @@ class CommandError(BaseException):
 
 # The main console
 class Console:
-    def __init__(self, clientDict):
+    def __init__(self, clientDict, preload=None):
         self.clients = clientDict
         # Init command processing
         self.cmd_queue = []
+        if preload is not None:
+            self.load_script(preload)
         # Init groups and command list
         self.groups = {}
         self.group_commands = {'list', 'roster', 'create', 'membership'}
@@ -394,7 +396,8 @@ if __name__ == "__main__":
     import io
 
     parser = argparse.ArgumentParser()
-    parser.add_argument(dest='config', help="Startup configuration.")
+    parser.add_argument('--config', '-c', required=True, help="Startup configuration.")
+    parser.add_argument('--preload', '-l', required=False, default=None, help="Preload a script to execute on startup.")
     args = parser.parse_args()
 
     # Get configuration (data distributions and number of nodes and shuffle weight)
@@ -476,7 +479,7 @@ if __name__ == "__main__":
     #     time.sleep(1)
 
     # Start execution
-    console = Console(clientDict)
+    console = Console(clientDict, preload=args.preload)
     console.run()
 
     print("Ending experiment.")
