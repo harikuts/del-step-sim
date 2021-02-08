@@ -394,6 +394,10 @@ if __name__ == "__main__":
     import argparse
     import pickle
     import io
+    import os
+
+    # Required for server job compatibility
+    os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', '-c', required=True, help="Startup configuration.")
