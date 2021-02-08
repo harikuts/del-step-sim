@@ -23,6 +23,18 @@ load ffa-cycle.txt
 load ffa-cycle.txt
 # Cycle 9
 load ffa-cycle.txt
+# Cycle 10
+load ffa-cycle.txt
+# Cycle 11
+load ffa-cycle.txt
+# Cycle 12
+load ffa-cycle.txt
+# Cycle 13
+load ffa-cycle.txt
+# Cycle 14
+load ffa-cycle.txt
+# Cycle 15
+load ffa-cycle.txt
 # Reporting
 log results
 save results twitter-run.csv
