@@ -1,3 +1,3 @@
 [TWITTER]
 ENCODER = global_word_map.pkl
-DS_FILES = ylecun_full.twt, fchollet_full.twt, anthonyvslater_full.twt
+DS_FILES = ylecun_full.twt, fchollet_full.twt, andrewyng_full.twt, anthonyvslater_full.twt
