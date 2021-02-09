@@ -8,3 +8,5 @@ test 10.0.0.2 local
 test 10.0.0.2 global
 test 10.0.0.3 local
 test 10.0.0.3 global
+test 10.0.0.4 local
+test 10.0.0.4 global
