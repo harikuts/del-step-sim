@@ -1,6 +1,6 @@
 # Set up groups
 link 1.0
-load set-medium-iid-groups.txt
+load set_twitter_groups.txt
 autonet
 # Train all, share within groups, aggregate, test our representatives
 # Cycle 0
