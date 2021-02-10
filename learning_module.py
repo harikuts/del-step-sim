@@ -146,6 +146,7 @@ class Model:
         model = tf.keras.Sequential()
         model.add(tf.keras.layers.LSTM(1024, input_shape=(SEQ_LEN, vocab_size), return_sequences=True))
         model.add(tf.keras.layers.LSTM(1024))
+        model.add(tf.keras.layers.Dense(1024))
         model.add(tf.keras.layers.Dense(vocab_size, activation="softmax"))
         model.compile(loss="categorical_crossentropy", optimizer=tf.keras.optimizers.RMSprop(lr=0.001), metrics=['accuracy'])
         return model
@@ -397,7 +398,7 @@ if __name__ == "__main__":
     data = combine(data, test_data)
     # random.shuffle(data)
     # Do the learning!
-    run = modelA.model.fit(data[X_INDEX], data[Y_INDEX], epochs=10, validation_split=0.15, batch_size=128, shuffle=True)
+    run = modelA.model.fit(data[X_INDEX], data[Y_INDEX], epochs=20, validation_split=0.15, batch_size=128, shuffle=True)
     history = run.history
     print(history.keys())
     # import pdb
