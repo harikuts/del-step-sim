@@ -420,7 +420,7 @@ if __name__ == "__main__":
     plt.ylabel('loss')
     plt.xlabel('epoch')
     plt.legend(['train', 'test'], loc='upper left')
-    plt.show("loss.png")
+    plt.savefig("loss.png")
 
         
 
