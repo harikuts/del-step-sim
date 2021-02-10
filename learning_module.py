@@ -72,9 +72,9 @@ class Model:
         self.print_("New learning rate is " + str(self.communal_learning_rate))
 
     # Takes a training step (should be called train)
-    def step(self):
+    def step(self, epochs=NUM_EPOCHS):
         if self.data is not None:
-            history = self.model.fit(self.data[X_INDEX], self.data[Y_INDEX], epochs=NUM_EPOCHS)
+            history = self.model.fit(self.data[X_INDEX], self.data[Y_INDEX], epochs=epochs)
             self.sharing_model = (self.data[D_SIZE_INDEX], self.model.get_weights())
         else:
             raise DataError("Cannot train model. No data exists.")
@@ -260,7 +260,7 @@ class DataIncubator:
         # Check for client name (this will be required in the future)
         if client_name is not None:
             # Call retrieve method from databin
-            if num_entries is None:
+            if num_entries == None:
                 data = self.data_shares[name].retrieve_all()
             else:
                 data = self.data_shares[name].retrieve(num_entries)
@@ -358,148 +358,94 @@ class DataIncubator:
         # Return x and y
         return X, y
         
-
-# NOT FUNCTIONAL AT THE MOMENT
-class ModelIncubator:
-    def __init__(self, data_ratios):
-        # Load dataset into global training and testing sets
-        self.x_train, self.x_test, self.y_train, self.y_test = self.get_dataset()
-        # Split into specific sets
-        self.data_shares = self.rsplit(self.x_train, self.y_train, nonIID=True, ratios=data_ratios)
-        self.test_data = (len(self.x_test), self.x_test, self.y_test)
-        print("Model incubator has been generated.")
-        
-    # Use this function to select one of the dataset grab functions
-    def get_dataset(self):
-        return self.get_mnist()
-
-    # MNIST Dataset
-    def get_mnist(self):
-        # Import MNIST data
-        print ("\nUnpacking MNIST data...")
-        # mnist = tf.keras.datasets.mnist
-        # Load data into trains
-        # (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data(path=CUR_DIR+'/mnist.npz')
-        path = CUR_DIR + '/mnist.npz'
-        print ("Path: ", path)
-        with np.load(path) as data:
-            print("Setting x_train...")
-            x_train = data['x_train']
-            print("\ty_train...")
-            y_train = data['y_train']
-            print("\tx_test...")
-            x_test = data['x_test']
-            print("\ty_test...")
-            y_test = data['y_test']
-        print ("Unpacked data!")
-        x_train, x_test = x_train / 255.0, x_test / 255.0
-        return x_train, x_test, y_train, y_test
-
-    # To split the data
-    def rsplit(self, x_train, y_train, nonIID=False, ratios=None):
-        # Splitting the dataset for different clients
-        print ("\nSplitting data into different clients...")
-        if True:
-            print ("\tAssigning ranges of data...")
-            accumulations = np.array([sum(ratios[0:i+1]) for i in range(len(ratios))])
-            print(accumulations)
-            markers = accumulations * len(x_train)
-            markers = [int(marker) for marker in markers]
-            print(markers)
-        else:
-            print ("\tUniformly assigning ranges of data")
-            # markers = [1/num_clients * (n+1) for n in range(num_clients)]
-        # Storing each subset of data in a client
-        print ("\tStoring subsets of data into each client...")
-        dataSplits = []
-        for j in range(len(markers)):
-            x_data = x_train[(markers[j-1] if j > 0 else 0):markers[j]]
-            y_data = y_train[(markers[j-1] if j > 0 else 0):markers[j]]
-            data_size = len(x_data)
-            dataSplits.append((data_size, x_data, y_data))
-        return dataSplits
-
-class BookModelIncubator:
-    def __init__(self, data_ratios):
-        self.x_train, self.x_test, self.y_train, self.y_test = self.get_dataset()
-        self.data_shares = self.rsplit(self.x_train, self.y_train, nonIID=True, ratios=data_ratios)
-        self.test_data = (len(self.x_test), self.x_test, self.y_test)
-        print("Model incubator has been generated.")
-        
-    # Use this function to select one of the dataset grab functions
-    def get_dataset(self):
-        return self.get_mnist()
-
-    # MNIST Dataset
-    def get_mnist(self):
-        # Import MNIST data
-        print ("\nUnpacking MNIST data...")
-#         mnist = tf.keras.datasets.mnist
-        # Load data into trains
-#         (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data(path=CUR_DIR+'/mnist.npz')
-        path = CUR_DIR + '/mnist.npz'
-        print ("Path: ", path)
-        with np.load(path) as data:
-            print("Setting x_train...")
-            x_train = data['x_train']
-            print("\ty_train...")
-            y_train = data['y_train']
-            print("\tx_test...")
-            x_test = data['x_test']
-            print("\ty_test...")
-            y_test = data['y_test']
-        print ("Unpacked data!")
-        x_train, x_test = x_train / 255.0, x_test / 255.0
-        return x_train, x_test, y_train, y_test
-
-    # To split the data
-    def rsplit(self, x_train, y_train, nonIID=False, ratios=None):
-        # Splitting the dataset for different clients
-        print ("\nSplitting data into different clients...")
-        if True:
-            print ("\tAssigning ranges of data...")
-            accumulations = np.array([sum(ratios[0:i+1]) for i in range(len(ratios))])
-            print(accumulations)
-            markers = accumulations * len(x_train)
-            markers = [int(marker) for marker in markers]
-            print(markers)
-        else:
-            print ("\tUniformly assigning ranges of data")
-            # markers = [1/num_clients * (n+1) for n in range(num_clients)]
-        # Storing each subset of data in a client
-        print ("\tStoring subsets of data into each client...")
-        dataSplits = []
-        for j in range(len(markers)):
-            x_data = x_train[(markers[j-1] if j > 0 else 0):markers[j]]
-            y_data = y_train[(markers[j-1] if j > 0 else 0):markers[j]]
-            data_size = len(x_data)
-            dataSplits.append((data_size, x_data, y_data))
-        return dataSplits
-
 # If called as main run test scripts
 if __name__ == "__main__":
+    import configparser
+    import matplotlib.pyplot as plt
+
+    config = configparser.ConfigParser()
+    config.read('startup-config.txt')
+    encoder_file = config['TWITTER']['ENCODER']
+    ds_files = config['TWITTER']['DS_FILES']
+    ds_files = [n.strip() for n in ds_files.split(',')]
+    num_nodes = len(ds_files)
+
+    # Load encoder word map
+    with io.open(encoder_file, 'rb') as f:
+        word_map = pickle.load(f)
+    # Function for assembling data
+    def combine(data1, data2):
+        data_size = data1[D_SIZE_INDEX] + data2[D_SIZE_INDEX]
+        # print(data1[X_INDEX].shape, data2[X_INDEX].shape)
+        x = np.concatenate((data1[X_INDEX], data2[X_INDEX]))
+        # print(x.shape)
+        y = np.concatenate((data1[Y_INDEX], data2[Y_INDEX]))
+        return (data_size, x, y)
+    # Create Incubator with and load data
     DI = DataIncubator()
-    DI.createDataBin("MNIST", DI.get_mnist)
-    print(DI.data_shares["MNIST"].getSize())
-    # Test Model A
-    data = DI.retrieve("MNIST", 5000, "Model A")
-    test_data = DI.test_shares["MNIST"]
-    modelA = Model()
-    modelA.setData(data)
-    modelA.step()
-    modelA.test()
-    print("Model A passed!")
-    # Test Model B
-    data = DI.retrieve("MNIST", 3000, "Model B")
-    test_data = DI.test_shares["MNIST"]
-    modelB = Model()
-    modelB.setData(data)
-    modelB.step()
-    modelB.test()
-    print("Model B passed!")
-    # Test global data
+    for f in ds_files:
+        DI.createDataBin(f, DI.get_twitter_dataset, [f, word_map])
+        if f is ds_files[0]:
+            data = DI.retrieve(f, client_name=f)
+        else:
+            data = combine(data, DI.retrieve(f, client_name=f))
+    # Create model and set up data
+    modelA = Model(model_args=[len(word_map)])
     DI.setGlobalData()
-    print(DI.global_data[0])
-    assert DI.global_data[0] == 8000
-    print("Global/Assembly passed!")
+    test_data = DI.global_data
+    data = combine(data, test_data)
+    # random.shuffle(data)
+    # Do the learning!
+    run = modelA.model.fit(data[X_INDEX], data[Y_INDEX], epochs=10, validation_split=0.15, batch_size=128, shuffle=True)
+    history = run.history
+    print(history.keys())
+    # import pdb
+    # pdb.set_trace()
+    try:
+        plt.plot(history['accuracy'])
+    except KeyError:
+        plt.plot(history['acc'])
+    try:
+        plt.plot(history['val_accuracy'])
+    except KeyError:
+        plt.plot(history['val_acc'])
+    plt.title('model accuracy')
+    plt.ylabel('accuracy')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'test'], loc='upper left')
+    plt.savefig("accuracy.png")
+    plt.plot(history['loss'])
+    plt.plot(history['val_loss'])
+    plt.title('model loss')
+    plt.ylabel('loss')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'test'], loc='upper left')
+    plt.show("loss.png")
+
+        
+
+    # DI = DataIncubator()
+    # DI.createDataBin("MNIST", DI.get_mnist)
+    # print(DI.data_shares["MNIST"].getSize())
+    # # Test Model A
+    # data = DI.retrieve("MNIST", 5000, "Model A")
+    # test_data = DI.test_shares["MNIST"]
+    # modelA = Model()
+    # modelA.setData(data)
+    # modelA.step()
+    # modelA.test()
+    # print("Model A passed!")
+    # # Test Model B
+    # data = DI.retrieve("MNIST", 3000, "Model B")
+    # test_data = DI.test_shares["MNIST"]
+    # modelB = Model()
+    # modelB.setData(data)
+    # modelB.step()
+    # modelB.test()
+    # print("Model B passed!")
+    # # Test global data
+    # DI.setGlobalData()
+    # print(DI.global_data[0])
+    # assert DI.global_data[0] == 8000
+    # print("Global/Assembly passed!")
     
