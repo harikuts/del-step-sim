@@ -144,7 +144,7 @@ class Model:
 
     def LSTM(self, vocab_size):
         model = tf.keras.Sequential()
-        model.add(tf.keras.layers.LSTM(512, input_shape=(SEQ_LEN, vocab_size), kernel_regularizer=tf.keras.regularizers.l2(0.01), bias_regularizer=tf.keras.regularizers.l2(0.001)))
+        model.add(tf.keras.layers.LSTM(512, input_shape=(SEQ_LEN, vocab_size)))
         model.add(tf.keras.layers.Dense(vocab_size, activation="softmax"))
         model.compile(loss="categorical_crossentropy", optimizer=tf.keras.optimizers.RMSprop(lr=0.001), metrics=['accuracy'])
         return model
@@ -414,6 +414,7 @@ if __name__ == "__main__":
     plt.xlabel('epoch')
     plt.legend(['train', 'test'], loc='upper left')
     plt.savefig("accuracy.png")
+    plt.show()
     plt.plot(history['loss'])
     plt.plot(history['val_loss'])
     plt.title('model loss')
@@ -421,6 +422,7 @@ if __name__ == "__main__":
     plt.xlabel('epoch')
     plt.legend(['train', 'test'], loc='upper left')
     plt.savefig("loss.png")
+    plt.show()
 
         
 
