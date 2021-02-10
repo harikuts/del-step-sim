@@ -3,7 +3,6 @@
 from dummy_net import DummyNet
 from dummy_net import Packet
 
-from learning_module import ModelIncubator
 from learning_module import Model
 from learning_module import DataIncubator
 
@@ -450,7 +449,6 @@ if __name__ == "__main__":
     with io.open(encoder_file, 'rb') as f:
         word_map = pickle.load(f)
     # Create Incubator with and load data
-    # MI = ModelIncubator([0.83, 0.83, 0.83, 0.83, 0.2])
     DI = DataIncubator()
     for f in ds_files:
         DI.createDataBin(f, DI.get_twitter_dataset, [f, word_map])
