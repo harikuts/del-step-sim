@@ -398,7 +398,7 @@ if __name__ == "__main__":
     data = combine(data, test_data)
     # random.shuffle(data)
     # Do the learning!
-    run = modelA.model.fit(data[X_INDEX], data[Y_INDEX], epochs=20, validation_split=0.15, batch_size=128, shuffle=True)
+    run = modelA.model.fit(data[X_INDEX], data[Y_INDEX], epochs=100, validation_split=0.15, batch_size=128, shuffle=True)
     history = run.history
     print(history.keys())
     # import pdb
