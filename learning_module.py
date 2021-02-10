@@ -21,7 +21,7 @@ Y_INDEX = 2
 D_SIZE_INDEX = 0
 # Training variables
 TRAIN_TEST_SPLIT = 0.85
-NUM_EPOCHS = 1
+NUM_EPOCHS = 5
 SEQ_LEN = 2
 # Word map for OHE
 with io.open(WORD_MAP_FILE, 'rb') as f:
