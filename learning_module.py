@@ -144,7 +144,7 @@ class Model:
 
     def LSTM(self, vocab_size):
         model = tf.keras.Sequential()
-        model.add(tf.keras.layers.LSTM(1024, input_shape=(SEQ_LEN, vocab_size)))
+        model.add(tf.keras.layers.LSTM(1024, input_shape=(SEQ_LEN, vocab_size), return_sequences=True))
         model.add(tf.keras.layers.LSTM(1024))
         model.add(tf.keras.layers.Dense(vocab_size, activation="softmax"))
         model.compile(loss="categorical_crossentropy", optimizer=tf.keras.optimizers.RMSprop(lr=0.001), metrics=['accuracy'])
