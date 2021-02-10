@@ -22,7 +22,7 @@ D_SIZE_INDEX = 0
 # Training variables
 TRAIN_TEST_SPLIT = 0.85
 NUM_EPOCHS = 1
-SEQ_LEN = 1
+SEQ_LEN = 2
 # Word map for OHE
 with io.open(WORD_MAP_FILE, 'rb') as f:
     WORD_MAP = pickle.load(f)
@@ -144,7 +144,8 @@ class Model:
 
     def LSTM(self, vocab_size):
         model = tf.keras.Sequential()
-        model.add(tf.keras.layers.LSTM(512, input_shape=(SEQ_LEN, vocab_size)))
+        model.add(tf.keras.layers.LSTM(1024, input_shape=(SEQ_LEN, vocab_size)))
+        model.add(tf.keras.layers.LSTM(1024))
         model.add(tf.keras.layers.Dense(vocab_size, activation="softmax"))
         model.compile(loss="categorical_crossentropy", optimizer=tf.keras.optimizers.RMSprop(lr=0.001), metrics=['accuracy'])
         return model
