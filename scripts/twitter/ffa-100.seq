@@ -25,5 +25,5 @@ load ffa-cycle.txt
 load ffa-cycle.txt
 # Reporting
 log results
-save results twitter-run.csv
+save results twitter-run-100.csv
 exit
