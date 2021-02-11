@@ -74,7 +74,7 @@ class Model:
     # Takes a training step (should be called train)
     def step(self, epochs=NUM_EPOCHS):
         if self.data is not None:
-            history = self.model.fit(self.data[X_INDEX], self.data[Y_INDEX], epochs=epochs)
+            history = self.model.fit(self.data[X_INDEX], self.data[Y_INDEX], epochs=epochs, batch_size=128, shuffle=True)
             self.sharing_model = (self.data[D_SIZE_INDEX], self.model.get_weights())
         else:
             raise DataError("Cannot train model. No data exists.")
