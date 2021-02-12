@@ -1,0 +1,83 @@
+# Set up groups
+load set-medium-iid-groups.txt
+autonet
+# Train all, share within groups, aggregate, test our representatives
+# Cycle 0
+load medium-group-cycle.txt
+load test-medium-iid.txt
+# Cycle 1
+load medium-group-cycle.txt
+load test-medium-iid.txt
+# Cycle 2
+load medium-group-cycle.txt
+load test-medium-iid.txt
+# Cycle 3
+load medium-group-cycle.txt
+load test-medium-iid.txt
+# Cycle 4
+load medium-group-cycle.txt
+load test-medium-iid.txt
+# Cycle 5
+load medium-group-cycle.txt
+load test-medium-iid.txt
+# Cycle 6
+load medium-group-cycle.txt
+load test-medium-iid.txt
+# Cycle 7
+load medium-group-cycle.txt
+load test-medium-iid.txt
+# Cycle 8
+load medium-group-cycle.txt
+load test-medium-iid.txt
+# Cycle 9
+load medium-group-cycle.txt
+load test-medium-iid.txt
+# Cycle 10
+load medium-group-cycle.txt
+load test-medium-iid.txt
+# Cycle 11
+load medium-group-cycle.txt
+load test-medium-iid.txt
+# Cycle 12
+load medium-group-cycle.txt
+load test-medium-iid.txt
+# Cycle 13
+load medium-group-cycle.txt
+load test-medium-iid.txt
+# Cycle 14
+load medium-group-cycle.txt
+load test-medium-iid.txt
+# Cycle 15
+load medium-group-cycle.txt
+load test-medium-iid.txt
+# Cycle 16
+load medium-group-cycle.txt
+load test-medium-iid.txt
+# Cycle 17
+load medium-group-cycle.txt
+load test-medium-iid.txt
+# Cycle 18
+load medium-group-cycle.txt
+load test-medium-iid.txt
+# Cycle 19
+load medium-group-cycle.txt
+load test-medium-iid.txt
+# Cycle 20
+load medium-group-cycle.txt
+load test-medium-iid.txt
+# Cycle 21
+load medium-group-cycle.txt
+load test-medium-iid.txt
+# Cycle 22
+load medium-group-cycle.txt
+load test-medium-iid.txt
+# Cycle 23
+load medium-group-cycle.txt
+load test-medium-iid.txt
+# Cycle 24
+load medium-group-cycle.txt
+load test-medium-iid.txt
+# Reporting
+log results
+save results
+exit
