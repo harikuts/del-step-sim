@@ -5,34 +5,34 @@ autonet
 # Train all, share within groups, aggregate, test our representatives
 train
 # Cycle 0
-load gro-cycle.txt
+load inv-gro-cycle.txt
 save results twitter-inv-gro.csv
 # Cycle 1
-load gro-cycle.txt
+load inv-gro-cycle.txt
 save results twitter-inv-gro.csv
 # Cycle 2
-load gro-cycle.txt
+load inv-gro-cycle.txt
 save results twitter-inv-gro.csv
 # Cycle 3
-load gro-cycle.txt
+load inv-gro-cycle.txt
 save results twitter-inv-gro.csv
 # Cycle 4
-load gro-cycle.txt
+load inv-gro-cycle.txt
 save results twitter-inv-gro.csv
 # Cycle 5
-load gro-cycle.txt
+load inv-gro-cycle.txt
 save results twitter-inv-gro.csv
 # Cycle 6
-load gro-cycle.txt
+load inv-gro-cycle.txt
 save results twitter-inv-gro.csv
 # Cycle 7
-load gro-cycle.txt
+load inv-gro-cycle.txt
 save results twitter-inv-gro.csv
 # Cycle 8
-load gro-cycle.txt
+load inv-gro-cycle.txt
 save results twitter-inv-gro.csv
 # Cycle 9
-load gro-cycle.txt
+load inv-gro-cycle.txt
 save results twitter-inv-gro.csv
 # Reporting
 log results
