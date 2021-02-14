@@ -296,7 +296,7 @@ class Console:
     def test_global(self, ip):
         global_data = DI.AssembleTestData(list(self.clients.keys()))
         results = self.clients[ip].model.test(data=global_data)
-        print("LOCAL RESULT - LOSS:", results[0], "ACCURACY:", results[1])
+        print("GLOBAL RESULT - LOSS:", results[0], "ACCURACY:", results[1])
         self.log.commitResult(ip, "global", results)
     def aggregate(self, ip):
         self.clients[ip].aggregate()
