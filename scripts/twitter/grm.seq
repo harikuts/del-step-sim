@@ -1,0 +1,97 @@
+# Set up groups
+link 1.0
+load set_twitter_groups.txt
+autonet
+# Train all, share within groups, aggregate, test our representatives
+# Cycle 0
+load gro-cycle.txt
+load spot-test-twt.txt
+save results twitter-run-grm.csv
+# Cycle 1; move away
+group g1 remove 10.0.0.1 10.0.0.3
+group g2 remove 10.0.0.5 10.0.0.7
+group g3 remove 10.0.0.9 10.0.0.11
+group g1 add 10.0.0.5 10.0.0.9
+group g2 add 10.0.0.1 10.0.0.11
+group g3 add 10.0.0.3 10.0.0.7
+load gro-cycle.txt
+load spot-test-twt.txt
+save results twitter-run-grm.csv
+# Cycle 2; move home
+group g1 remove 10.0.0.5 10.0.0.9
+group g2 remove 10.0.0.1 10.0.0.11
+group g3 remove 10.0.0.3 10.0.0.7
+group g1 add 10.0.0.1 10.0.0.3
+group g2 add 10.0.0.5 10.0.0.7
+group g3 add 10.0.0.9 10.0.0.11
+load gro-cycle.txt
+load spot-test-twt.txt
+save results twitter-run-grm.csv
+# Cycle 3; move away
+group g1 remove 10.0.0.1 10.0.0.3
+group g2 remove 10.0.0.5 10.0.0.7
+group g3 remove 10.0.0.9 10.0.0.11
+group g1 add 10.0.0.5 10.0.0.9
+group g2 add 10.0.0.1 10.0.0.11
+group g3 add 10.0.0.3 10.0.0.7
+load gro-cycle.txt
+load spot-test-twt.txt
+save results twitter-run-grm.csv
+# Cycle 4; move home
+group g1 remove 10.0.0.5 10.0.0.9
+group g2 remove 10.0.0.1 10.0.0.11
+group g3 remove 10.0.0.3 10.0.0.7
+group g1 add 10.0.0.1 10.0.0.3
+group g2 add 10.0.0.5 10.0.0.7
+group g3 add 10.0.0.9 10.0.0.11
+load gro-cycle.txt
+load spot-test-twt.txt
+save results twitter-run-grm.csv
+# Cycle 5; move away
+group g1 remove 10.0.0.1 10.0.0.3
+group g2 remove 10.0.0.5 10.0.0.7
+group g3 remove 10.0.0.9 10.0.0.11
+group g1 add 10.0.0.5 10.0.0.9
+group g2 add 10.0.0.1 10.0.0.11
+group g3 add 10.0.0.3 10.0.0.7
+load gro-cycle.txt
+load spot-test-twt.txt
+save results twitter-run-grm.csv
+# Cycle 6; move home
+group g1 remove 10.0.0.5 10.0.0.9
+group g2 remove 10.0.0.1 10.0.0.11
+group g3 remove 10.0.0.3 10.0.0.7
+group g1 add 10.0.0.1 10.0.0.3
+group g2 add 10.0.0.5 10.0.0.7
+group g3 add 10.0.0.9 10.0.0.11
+load gro-cycle.txt
+load spot-test-twt.txt
+save results twitter-run-grm.csv
+# Cycle 7; move away
+group g1 remove 10.0.0.1 10.0.0.3
+group g2 remove 10.0.0.5 10.0.0.7
+group g3 remove 10.0.0.9 10.0.0.11
+group g1 add 10.0.0.5 10.0.0.9
+group g2 add 10.0.0.1 10.0.0.11
+group g3 add 10.0.0.3 10.0.0.7
+load gro-cycle.txt
+load spot-test-twt.txt
+save results twitter-run-grm.csv
+# Cycle 8; move home
+group g1 remove 10.0.0.5 10.0.0.9
+group g2 remove 10.0.0.1 10.0.0.11
+group g3 remove 10.0.0.3 10.0.0.7
+group g1 add 10.0.0.1 10.0.0.3
+group g2 add 10.0.0.5 10.0.0.7
+group g3 add 10.0.0.9 10.0.0.11
+load gro-cycle.txt
+load spot-test-twt.txt
+save results twitter-run-grm.csv
+# Cycle 9
+load gro-cycle.txt
+load spot-test-twt.txt
+save results twitter-run-grm.csv
+# Reporting
+log results
+save results twitter-run-grm.csv
+exit

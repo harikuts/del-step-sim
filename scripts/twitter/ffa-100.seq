@@ -5,33 +5,43 @@ autonet
 # Train all, share within groups, aggregate, test our representatives
 # Cycle 0
 load ffa-cycle.txt
+load spot-test-twt.txt
 save results twitter-run-100.csv
 # Cycle 1
 load ffa-cycle.txt
+load spot-test-twt.txt
 save results twitter-run-100.csv
 # Cycle 2
 load ffa-cycle.txt
+load spot-test-twt.txt
 save results twitter-run-100.csv
 # Cycle 3
 load ffa-cycle.txt
+load spot-test-twt.txt
 save results twitter-run-100.csv
 # Cycle 4
 load ffa-cycle.txt
+load spot-test-twt.txt
 save results twitter-run-100.csv
 # Cycle 5
 load ffa-cycle.txt
+load spot-test-twt.txt
 save results twitter-run-100.csv
 # Cycle 6
 load ffa-cycle.txt
+load spot-test-twt.txt
 save results twitter-run-100.csv
 # Cycle 7
 load ffa-cycle.txt
+load spot-test-twt.txt
 save results twitter-run-100.csv
 # Cycle 8
 load ffa-cycle.txt
+load spot-test-twt.txt
 save results twitter-run-100.csv
 # Cycle 9
 load ffa-cycle.txt
+load spot-test-twt.txt
 save results twitter-run-100.csv
 # Reporting
 log results

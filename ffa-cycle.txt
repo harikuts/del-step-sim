@@ -2,21 +2,3 @@ cycle
 train
 flood
 ag
-test 10.0.0.2 local
-test 10.0.0.2 group g1
-test 10.0.0.2 global
-test 10.0.0.4 local
-test 10.0.0.4 group g1
-test 10.0.0.4 global
-test 10.0.0.6 local
-test 10.0.0.6 group g2
-test 10.0.0.6 global
-test 10.0.0.8 local
-test 10.0.0.8 group g2
-test 10.0.0.8 global
-test 10.0.0.10 local
-test 10.0.0.10 group g3
-test 10.0.0.10 global
-test 10.0.0.12 local
-test 10.0.0.12 group g3
-test 10.0.0.12 global
