@@ -1,0 +1,49 @@
+# Set up groups
+link 1.0
+load set_twitter_groups.txt
+autonet
+# Train all, share within groups, aggregate, test our representatives
+# Cycle 0
+load gro-cycle.txt
+load spot-test-twt.txt
+save results twitter-run-gro.csv
+# Cycle 1
+load gro-cycle.txt
+load spot-test-twt.txt
+save results twitter-run-gro.csv
+# Cycle 2
+load ffa-cycle.txt
+load spot-test-twt.txt
+save results twitter-run-gro.csv
+# Cycle 3
+load gro-cycle.txt
+load spot-test-twt.txt
+save results twitter-run-gro.csv
+# Cycle 4
+load gro-cycle.txt
+load spot-test-twt.txt
+save results twitter-run-gro.csv
+# Cycle 5
+load ffa-cycle.txt
+load spot-test-twt.txt
+save results twitter-run-gro.csv
+# Cycle 6
+load gro-cycle.txt
+load spot-test-twt.txt
+save results twitter-run-gro.csv
+# Cycle 7
+load gro-cycle.txt
+load spot-test-twt.txt
+save results twitter-run-gro.csv
+# Cycle 8
+load ffa-cycle.txt
+load spot-test-twt.txt
+save results twitter-run-gro.csv
+# Cycle 9
+load gro-cycle.txt
+load spot-test-twt.txt
+save results twitter-run-gro.csv
+# Reporting
+log results
+save results twitter-run-gro.csv
+exit
