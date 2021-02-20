@@ -6,44 +6,44 @@ autonet
 # Cycle 0
 load gro-cycle.txt
 load spot-test-twt.txt
-save results twitter-run-gro.csv
+save results twitter-run-grf.csv
 # Cycle 1
 load gro-cycle.txt
 load spot-test-twt.txt
-save results twitter-run-gro.csv
+save results twitter-run-grf.csv
 # Cycle 2
 load ffa-cycle.txt
 load spot-test-twt.txt
-save results twitter-run-gro.csv
+save results twitter-run-grf.csv
 # Cycle 3
 load gro-cycle.txt
 load spot-test-twt.txt
-save results twitter-run-gro.csv
+save results twitter-run-grf.csv
 # Cycle 4
 load gro-cycle.txt
 load spot-test-twt.txt
-save results twitter-run-gro.csv
+save results twitter-run-grf.csv
 # Cycle 5
 load ffa-cycle.txt
 load spot-test-twt.txt
-save results twitter-run-gro.csv
+save results twitter-run-grf.csv
 # Cycle 6
 load gro-cycle.txt
 load spot-test-twt.txt
-save results twitter-run-gro.csv
+save results twitter-run-grf.csv
 # Cycle 7
 load gro-cycle.txt
 load spot-test-twt.txt
-save results twitter-run-gro.csv
+save results twitter-run-grf.csv
 # Cycle 8
 load ffa-cycle.txt
 load spot-test-twt.txt
-save results twitter-run-gro.csv
+save results twitter-run-grf.csv
 # Cycle 9
 load gro-cycle.txt
 load spot-test-twt.txt
-save results twitter-run-gro.csv
+save results twitter-run-grf.csv
 # Reporting
 log results
-save results twitter-run-gro.csv
+save results twitter-run-grf.csv
 exit
